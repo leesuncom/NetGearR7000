@@ -17,20 +17,31 @@ sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generat
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # Modify hostname
-uci -q batch <<-EOF
-	set system.@system[0].timezone='CST-8'
-	set system.@system[0].zonename='Asia/Shanghai'
-
-	delete system.ntp.server
-	add_list system.ntp.server='ntp1.aliyun.com'
-	add_list system.ntp.server='ntp.tencent.com'
-	add_list system.ntp.server='ntp.ntsc.ac.cn'
-	add_list system.ntp.server='time.apple.com'
-EOF
-uci commit system
 sed -i 's/OpenWrt/R7000/g' package/base-files/files/bin/config_generate
-sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
-#sed -i 's/UTC/CST-8/g' package/base-files/files/bin/config_generate
+
+# 替换系统时区和NTP服务器（直接修改配置文件，不依赖uci）
+# 目标文件：package/base-files/files/etc/config/system
+SYSTEM_CONF="package/base-files/files/etc/config/system"
+
+# 设置时区和区域名称
+sed -i '/option timezone/d' $SYSTEM_CONF  # 删除现有timezone配置
+sed -i '/option zonename/d' $SYSTEM_CONF   # 删除现有zonename配置
+# 在system配置块中添加新设置（定位到config system后插入）
+sed -i '/config system/a\    option timezone '"'CST-8'"'' $SYSTEM_CONF
+sed -i '/config system/a\    option zonename '"'Asia/Shanghai'"'' $SYSTEM_CONF
+
+# 配置NTP服务器
+sed -i '/config ntp/d' $SYSTEM_CONF  # 删除现有ntp配置块
+# 重新添加ntp配置块及服务器列表
+cat >> $SYSTEM_CONF <<EOF
+config ntp
+    option enabled '1'
+    option enable_server '0'
+    list server 'ntp1.aliyun.com'
+    list server 'ntp.tencent.com'
+    list server 'ntp.ntsc.ac.cn'
+    list server 'time.apple.com'
+EOF
 #sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
 #sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
 #sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
