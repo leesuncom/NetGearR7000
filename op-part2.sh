@@ -10,13 +10,13 @@
 #./scripts/feeds install -a
 
 # Modify default IP（已适配原逻辑）
-sed -i 's/192.168.1.1/192.168.3.2/g' feeds/luci/collections/luci/Makefile
+sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 
 # Modify default theme
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # 1. 修改默认主机名（替换generate_static_system中的hostname）
-sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" feeds/luci/collections/luci/Makefile
+sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" package/base-files/files/bin/config_generate
 
 # 2. 修改默认时区和区域名称
 sed -i 's/GMT0/CST-8/g' package/base-files/files/bin/config_generate
