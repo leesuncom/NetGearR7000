@@ -10,17 +10,18 @@
 #./scripts/feeds install -a
 
 # Modify default IP（已适配原逻辑）
-sed -i 's/192.168.1.1/192.168.3.2/g' "$CONFIG_GENERATE"
+sed -i 's/192.168.1.1/192.168.3.2/g' feeds/luci/collections/luci/Makefile
 
 # Modify default theme
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # 1. 修改默认主机名（替换generate_static_system中的hostname）
-sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" "$CONFIG_GENERATE"
+sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" feeds/luci/collections/luci/Makefile
 
 # 2. 修改默认时区和区域名称
 sed -i 's/GMT0/CST-8/g' package/base-files/files/bin/config_generate
 sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
+# sed -i "/timezone=/s#UTC#Asia/Shanghai#" package/base-files/files/bin/config_generate
 
 # 3. 替换NTP服务器列表（先删除原有server，再添加新服务器）
 sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
