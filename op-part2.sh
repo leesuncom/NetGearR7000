@@ -17,10 +17,21 @@ sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generat
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # Modify hostname
+uci -q batch <<-EOF
+	set system.@system[0].timezone='CST-8'
+	set system.@system[0].zonename='Asia/Shanghai'
+
+	delete system.ntp.server
+	add_list system.ntp.server='ntp1.aliyun.com'
+	add_list system.ntp.server='ntp.tencent.com'
+	add_list system.ntp.server='ntp.ntsc.ac.cn'
+	add_list system.ntp.server='time.apple.com'
+EOF
+uci commit system
 sed -i 's/OpenWrt/R7000/g' package/base-files/files/bin/config_generate
-sed -i 's/UTC/CST-8/g' package/base-files/files/bin/config_generate
 sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
-sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
-sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
-sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
-sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
+#sed -i 's/UTC/CST-8/g' package/base-files/files/bin/config_generate
+#sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
+#sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
+#sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
+#sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
