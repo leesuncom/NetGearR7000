@@ -10,18 +10,18 @@
 # This is free software, licensed under the MIT License.
 # See /LICENSE for more information.
 #
-
-sed 's/luci-app-vsftpd //g' include/target.mk
-sed 's/luci-app-filetransfer //g' include/target.mk
-sed 's/luci-app-accesscontrol //g' include/target.mk
-sed 's/luci-app-autoreboot //g' include/target.mk
-sed 's/luci-app-commands//g' include/target.mk
-sed 's/ddns-scripts_dnspod //g' include/target.mk
-sed 's/ddns-scripts_aliyun //g' include/target.mk
-sed 's/luci-app-ddns //g' include/target.mk
-sed 's/block-mount //g' include/target.mk
-sed 's/luci-app-nlbwmon //g' include/target.mk
-sed 's/luci-app-wol //g' include/target.mk
+sed 's/\(luci-app-vsftpd \|luci-app-filetransfer \|luci-app-accesscontrol \|luci-app-autoreboot \|luci-app-commands\|ddns-scripts_dnspod \|ddns-scripts_aliyun \|luci-app-ddns \|block-mount \|luci-app-nlbwmon \|luci-app-wol \)//g' include/target.mk
+#sed 's/luci-app-vsftpd //g' include/target.mk
+#sed 's/luci-app-filetransfer //g' include/target.mk
+#sed 's/luci-app-accesscontrol //g' include/target.mk
+#sed 's/luci-app-autoreboot //g' include/target.mk
+#sed 's/luci-app-commands//g' include/target.mk
+#sed 's/ddns-scripts_dnspod //g' include/target.mk
+#sed 's/ddns-scripts_aliyun //g' include/target.mk
+#sed 's/luci-app-ddns //g' include/target.mk
+#sed 's/block-mount //g' include/target.mk
+#sed 's/luci-app-nlbwmon //g' include/target.mk
+#sed 's/luci-app-wol //g' include/target.mk
 
 # Modify default theme
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
