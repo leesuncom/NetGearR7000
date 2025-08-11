@@ -12,7 +12,7 @@
 #
 
 sed 's/luci-app-vsftpd //g' include/target.mk
-sed 's/luci-app-filetransfe //g' include/target.mk
+sed 's/luci-app-filetransfer //g' include/target.mk
 sed 's/luci-app-accesscontrol //g' include/target.mk
 sed 's/luci-app-autoreboot //g' include/target.mk
 sed 's/luci-app-commands//g' include/target.mk
