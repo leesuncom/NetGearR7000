@@ -20,9 +20,9 @@ sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].h
 
 # 2. 修改默认时区和区域名称
 sed -i 's/GMT0/CST-8/g' package/base-files/files/bin/config_generate
-sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
+# sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
 # sed -i "/timezone=/s#UTC#Asia/Shanghai#" package/base-files/files/bin/config_generate
-# sed -i "s/'UTC'/'CST-8'\n   set system.@system[-1].zonename='Asia\/Shanghai'/g" package/base-files/files/bin/config_generate
+sed -i "s/'UTC'/'CST-8'\n   set system.@system[-1].zonename='Asia\/Shanghai'/g" package/base-files/files/bin/config_generate
 
 # 3. 替换NTP服务器列表（先删除原有server，再添加新服务器）
 sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
