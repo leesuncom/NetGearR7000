@@ -19,7 +19,6 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" package/base-files/files/bin/config_generate
 
 # 2. 修改默认时区和区域名称
-sed -i 's/GMT0/CST-8/g' package/base-files/files/bin/config_generate
 # sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
 # sed -i "/timezone=/s#UTC#Asia/Shanghai#" package/base-files/files/bin/config_generate
 sed -i "s/'UTC'/'CST-8'\n   set system.@system[-1].zonename='Asia\/Shanghai'/g" package/base-files/files/bin/config_generate
