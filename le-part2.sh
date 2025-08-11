@@ -11,8 +11,6 @@
 # See /LICENSE for more information.
 #
 
-# Modify default IP
-sed 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 sed 's/luci-app-vsftpd//g' include/target.mk
 sed 's/luci-app-filetransfe//g' include/target.mk
 sed 's/luci-app-accesscontrol//g' include/target.mk
@@ -28,7 +26,8 @@ sed 's/luci-app-wol //g' include/target.mk
 # Modify default theme
 sed 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
-# Modify hostname
+# Modify hostname Modify default IP
+sed 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 sed 's/LEDE/R7000/g' package/base-files/files/bin/config_generate
 
 # 发布固件名称添加日期
