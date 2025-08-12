@@ -48,6 +48,7 @@ git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/l
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
 
 # 1. 克隆仓库（指定分支）
+mkdir -p feeds/immortalwrt
 git clone -b openwrt-24.10 https://github.com/immortalwrt/luci.git feeds/immortalwrt
 
 # 2. 创建目标目录（关键：避免复制失败）
