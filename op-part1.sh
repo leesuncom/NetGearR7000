@@ -47,13 +47,11 @@ rm -rf feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
 
-# miniupnpd 2.3.7 to 2.1.20200510
-#rm -fr feeds/packages/net/miniupnpd
-#git clone --filter=blob:none --no-checkout https://github.com/openwrt/packages miniupnpd-tmp
-#cd miniupnpd-tmp
-#git sparse-checkout init --cone
-#git sparse-checkout set net/miniupnpd
-#git checkout openwrt-18.06
-#cp -r net/miniupnpd ../feeds/packages/net/
-#cd ..
-#rm -fr miniupnpd-tmp
+# 1. 克隆仓库（指定分支 openwrt-24.10）
+git clone -b openwrt-24.10 https://github.com/immortalwrt/luci.git temp_luci_repo
+
+# 2. 复制目标目录到指定路径
+cp -r temp_luci_repo/applications/luci-app-microsocks/* feeds/luci/applications/luci-app-microsocks/
+
+# 3. 清理临时仓库（可选）
+rm -rf temp_luci_repo
