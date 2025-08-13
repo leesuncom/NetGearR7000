@@ -31,6 +31,7 @@ sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/
 
 # 1. 确保目标目录存在
 # 确保目标目录存在
+cd openwrt
 mkdir -p feeds/luci/applications/luci-app-microsocks
 
 # 使用正确的 SVN 桥接 URL（注意 branches 路径）
