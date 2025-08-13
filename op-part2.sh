@@ -30,9 +30,13 @@ sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/
 sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
 
 # 1. 确保目标目录存在
-mkdir -p feeds/luci/applications/luci-app-microsocks/
-# 2. 使用正确的 SVN 桥接 URL
-svn export --force https://github.com/immortalwrt/luci/tree/openwrt-24.10/applications/luci-app-microsocks feeds/luci/applications/luci-app-microsocks/
+# 确保目标目录存在
+mkdir -p feeds/luci/applications/luci-app-microsocks
+
+# 使用正确的 SVN 桥接 URL（注意 branches 路径）
+svn export --force \
+    https://github.com/immortalwrt/luci/branches/openwrt-24.10/applications/luci-app-microsocks/ \
+    feeds/luci/applications/luci-app-microsocks
 
 # 3. 替换
 shopt -s extglob
