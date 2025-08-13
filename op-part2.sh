@@ -5,79 +5,58 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
-# 确保feeds已安装
+# 确保feeds已安装（根据您的需求决定是否启用）
 #./scripts/feeds update -a
 #./scripts/feeds install -a
 
-# Modify default IP（已适配原逻辑）
+# 修改默认IP
 sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 
-# Modify default theme
+# 修改默认主题
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
-# 1. 修改默认主机名（替换generate_static_system中的hostname）
+# 1. 修改默认主机名
 sed -i "s/set system.@system\[-1\].hostname='OpenWrt'/set system.@system\[-1\].hostname='R7000'/g" package/base-files/files/bin/config_generate
 
-# 2. 修改默认时区和区域名称
-# sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
-# sed -i "/timezone=/s#UTC#Asia/Shanghai#" package/base-files/files/bin/config_generate
-sed -i "s/'UTC'/'CST-8'\n   set system.@system[-1].zonename='Asia\/Shanghai'/g" package/base-files/files/bin/config_generate
+# 2. 修改默认时区和区域名称（优化后的版本）
+sed -i "s/'UTC'/'CST-8'/" package/base-files/files/bin/config_generate
+sed -i "/'CST-8'/a\   set system.@system[-1].zonename='Asia/Shanghai'" package/base-files/files/bin/config_generate
 
-# 3. 替换NTP服务器列表（先删除原有server，再添加新服务器）
-sed -i 's/0.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
-sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
-sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
-sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
+# 3. 替换NTP服务器列表（优化后的版本）
+sed -i '/0.openwrt.pool.ntp.org/d' package/base-files/files/bin/config_generate
+sed -i '/1.openwrt.pool.ntp.org/d' package/base-files/files/bin/config_generate
+sed -i '/2.openwrt.pool.ntp.org/d' package/base-files/files/bin/config_generate
+sed -i '/3.openwrt.pool.ntp.org/d' package/base-files/files/bin/config_generate
+sed -i "/system.ntp/d" package/base-files/files/bin/config_generate
+sed -i "/'system'/a\   set system.ntp='ntp1.aliyun.com ntp.tencent.com ntp.ntsc.ac.cn time.apple.com'" package/base-files/files/bin/config_generate
+sed -i "/'system'/a\   set system.ntp_enabled='1'" package/base-files/files/bin/config_generate
 
-# 1. 设置环境变量
-REPO_ROOT="$GITHUB_WORKSPACE"  # GitHub Actions 工作区根目录
-OPENWRT_DIR="$REPO_ROOT/openwrt"  # OpenWrt 源代码目录
+# 4. 确保目标目录存在
+mkdir -p target/linux/bcm53xx/image/
 
-# 2. 确保在 OpenWrt 目录中工作
-echo "当前工作目录: $(pwd)"
-if [ ! -d "$OPENWRT_DIR" ]; then
-    echo "错误: OpenWrt 目录不存在 - $OPENWRT_DIR"
-    exit 1
-fi
-cd "$OPENWRT_DIR" || exit 1
-echo "已进入 OpenWrt 目录: $(pwd)"
-
-# 3. 安装必要依赖
-sudo apt update
-sudo apt install -y subversion
-
-# 4. 创建目标目录
-FEEDS_DIR="$OPENWRT_DIR/feeds/luci/applications/luci-app-microsocks"
-echo "创建目录: $FEEDS_DIR"
-mkdir -p "$FEEDS_DIR"
-
-# 5. 下载 luci-app-microsocks
-echo "下载 luci-app-microsocks..."
-svn export --force \
-    https://github.com/immortalwrt/luci/branches/openwrt-24.10/applications/luci-app-microsocks/ \
-    "$FEEDS_DIR"
-
-# 6. 确保 Makefile 目录存在
-MAKEFILE_DIR="$OPENWRT_DIR/target/linux/bcm53xx/image"
-echo "创建目录: $MAKEFILE_DIR"
-mkdir -p "$MAKEFILE_DIR"
-
-# 7. 检查 Makefile 是否存在，不存在则创建
-MAKEFILE="$MAKEFILE_DIR/Makefile"
-if [ ! -f "$MAKEFILE" ]; then
-    echo "创建 Makefile 占位文件: $MAKEFILE"
-    touch "$MAKEFILE"
+# 5. 如果Makefile不存在则创建
+if [ ! -f "target/linux/bcm53xx/image/Makefile" ]; then
+    echo "创建 Makefile 占位文件"
+    echo "# Placeholder Makefile" > target/linux/bcm53xx/image/Makefile
 fi
 
-# 8. 修改 Makefile
-echo "修改 Makefile: $MAKEFILE"
-sed -i 's/device\/netgear_r7900/device\/netgear_r7000/g' "$MAKEFILE"
-sed -i 's/device\/netgear_r8000/device\/netgear_r7000/g' "$MAKEFILE"
+# 6. 修改设备列表（优化后的版本）
+# 先移除所有TARGET_DEVICES行
+sed -i '/^TARGET_DEVICES/d' target/linux/bcm53xx/image/Makefile
 
-echo "操作成功完成！"
+# 添加我们需要的设备
+echo "TARGET_DEVICES += netgear_r7000" >> target/linux/bcm53xx/image/Makefile
 
-# 3. 替换
-shopt -s extglob
-SHELL_FOLDER=$(dirname $(readlink -f "$0"))
-sed -i "s/^TARGET_DEVICES /# TARGET_DEVICES /" target/linux/bcm53xx/image/Makefile
-sed -i "s/# TARGET_DEVICES += netgear_r7000/TARGET_DEVICES += netgear_r7000/" target/linux/bcm53xx/image/Makefile
+# 7. 验证修改结果
+echo "=== 验证修改结果 ==="
+echo "主机名:"
+grep "hostname='R7000'" package/base-files/files/bin/config_generate
+echo -e "\n时区:"
+grep "timezone='CST-8'" package/base-files/files/bin/config_generate
+grep "zonename='Asia/Shanghai'" package/base-files/files/bin/config_generate
+echo -e "\nNTP服务器:"
+grep "ntp='ntp1.aliyun.com" package/base-files/files/bin/config_generate
+echo -e "\n设备列表:"
+grep "TARGET_DEVICES" target/linux/bcm53xx/image/Makefile
+
+echo "DIY 脚本 part 2 执行完成！"
