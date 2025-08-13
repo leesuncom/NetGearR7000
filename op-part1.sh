@@ -11,6 +11,7 @@
 #
 
 # microsocks
+rm -rf feeds/luci/applications/luci-app-microsocks
 git clone https://github.com/leesuncom/luci-app-microsocks.git feeds/luci/applications/luci-app-microsocks
 ./scripts/feeds update luci  # 更新 luci 相关 feeds
 ./scripts/feeds install luci-app-microsocks  # 安装插件到编译环境
