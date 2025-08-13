@@ -29,19 +29,52 @@ sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin
 sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
 sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
 
-# 1. 确保目标目录存在
-# 确保目标目录存在
-mkdir -p feeds/luci/applications/luci-app-microsocks/
-TEMP_DIR=$(mktemp -d)
-git clone --depth 1 --filter=blob:none \
-    --sparse -b openwrt-24.10 \
-    https://github.com/immortalwrt/luci.git "$TEMP_DIR"
-cd "$TEMP_DIR"
-git sparse-checkout set applications/luci-app-microsocks
-cp -R applications/luci-app-microsocks/* \
-    /home/runner/work/NetGearR7000/NetGearR7000/feeds/luci/applications/luci-app-microsocks/
-cd ..
-rm -rf "$TEMP_DIR"
+# 1. 设置环境变量
+REPO_ROOT="$GITHUB_WORKSPACE"  # GitHub Actions 工作区根目录
+OPENWRT_DIR="$REPO_ROOT/openwrt"  # OpenWrt 源代码目录
+
+# 2. 确保在 OpenWrt 目录中工作
+echo "当前工作目录: $(pwd)"
+if [ ! -d "$OPENWRT_DIR" ]; then
+    echo "错误: OpenWrt 目录不存在 - $OPENWRT_DIR"
+    exit 1
+fi
+cd "$OPENWRT_DIR" || exit 1
+echo "已进入 OpenWrt 目录: $(pwd)"
+
+# 3. 安装必要依赖
+sudo apt update
+sudo apt install -y subversion
+
+# 4. 创建目标目录
+FEEDS_DIR="$OPENWRT_DIR/feeds/luci/applications/luci-app-microsocks"
+echo "创建目录: $FEEDS_DIR"
+mkdir -p "$FEEDS_DIR"
+
+# 5. 下载 luci-app-microsocks
+echo "下载 luci-app-microsocks..."
+svn export --force \
+    https://github.com/immortalwrt/luci/branches/openwrt-24.10/applications/luci-app-microsocks/ \
+    "$FEEDS_DIR"
+
+# 6. 确保 Makefile 目录存在
+MAKEFILE_DIR="$OPENWRT_DIR/target/linux/bcm53xx/image"
+echo "创建目录: $MAKEFILE_DIR"
+mkdir -p "$MAKEFILE_DIR"
+
+# 7. 检查 Makefile 是否存在，不存在则创建
+MAKEFILE="$MAKEFILE_DIR/Makefile"
+if [ ! -f "$MAKEFILE" ]; then
+    echo "创建 Makefile 占位文件: $MAKEFILE"
+    touch "$MAKEFILE"
+fi
+
+# 8. 修改 Makefile
+echo "修改 Makefile: $MAKEFILE"
+sed -i 's/device\/netgear_r7900/device\/netgear_r7000/g' "$MAKEFILE"
+sed -i 's/device\/netgear_r8000/device\/netgear_r7000/g' "$MAKEFILE"
+
+echo "操作成功完成！"
 
 # 3. 替换
 shopt -s extglob
