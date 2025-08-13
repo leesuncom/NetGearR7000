@@ -32,12 +32,28 @@ sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/
 # 1. 确保目标目录存在
 # 确保目标目录存在
 cd openwrt
-mkdir -p feeds/luci/applications/luci-app-microsocks
+# 确保目标目录存在
+mkdir -p feeds/luci/applications/luci-app-microsocks/
 
-# 使用正确的 SVN 桥接 URL（注意 branches 路径）
-svn export --force \
-    https://github.com/immortalwrt/luci/branches/openwrt-24.10/applications/luci-app-microsocks/ \
-    feeds/luci/applications/luci-app-microsocks
+# 创建临时目录
+TEMP_DIR=$(mktemp -d)
+
+# 克隆特定分支的特定目录
+git clone --depth 1 --filter=blob:none \
+    --sparse -b openwrt-24.10 \
+    https://github.com/immortalwrt/luci.git "$TEMP_DIR"
+
+# 进入临时目录并配置稀疏检出
+cd "$TEMP_DIR"
+git sparse-checkout set applications/luci-app-microsocks
+
+# 复制文件到目标位置
+cp -R applications/luci-app-microsocks/* \
+    /home/runner/work/NetGearR7000/NetGearR7000/feeds/luci/applications/luci-app-microsocks/
+
+# 清理临时目录
+cd ..
+rm -rf "$TEMP_DIR"
 
 # 3. 替换
 shopt -s extglob
