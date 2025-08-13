@@ -10,6 +10,9 @@
 # See /LICENSE for more information.
 #
 
+# microsocks
+https://github.com/leesuncom/luci-app-microsocks.git feeds/luci/applications/luci-app-microsocks
+
 # replace luci-theme-argon to lastest update
 rm -rf feeds/smpackage/luci-theme-argon feeds/smpackage/luci-app-argon-config
 git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/smpackage/luci-theme-argon
