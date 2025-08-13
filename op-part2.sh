@@ -29,7 +29,12 @@ sed -i 's/1.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin
 sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
 sed -i 's/3.openwrt.pool.ntp.org/time.apple.com/g' package/base-files/files/bin/config_generate
 
-# 3. 替换NTP服务器列表（先删除原有server，再添加新服务器）
+# 1. 确保目标目录存在（以相对路径为例，根据实际需求调整）
+mkdir -p feeds/luci/applications/luci-app-microsocks/
+# 2. 用 svn export 下载 GitHub 目录下的所有文件（注意 URL 需用 raw 路径的对应格式）
+svn export --force https://github.com/immortalwrt/luci/branches/openwrt-24.10/applications/luci-app-microsocks/* feeds/luci/applications/luci-app-microsocks/
+
+# 3. 替换
 shopt -s extglob
 SHELL_FOLDER=$(dirname $(readlink -f "$0"))
 sed -i "s/^TARGET_DEVICES /# TARGET_DEVICES /" target/linux/bcm53xx/image/Makefile
