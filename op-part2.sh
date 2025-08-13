@@ -31,21 +31,11 @@ sed -i "/system.ntp/d" package/base-files/files/bin/config_generate
 sed -i "/'system'/a\   set system.ntp='ntp1.aliyun.com ntp.tencent.com ntp.ntsc.ac.cn time.apple.com'" package/base-files/files/bin/config_generate
 sed -i "/'system'/a\   set system.ntp_enabled='1'" package/base-files/files/bin/config_generate
 
-# 4. 确保目标目录存在
-mkdir -p target/linux/bcm53xx/image/
-
-# 5. 如果Makefile不存在则创建
-if [ ! -f "target/linux/bcm53xx/image/Makefile" ]; then
-    echo "创建 Makefile 占位文件"
-    echo "# Placeholder Makefile" > target/linux/bcm53xx/image/Makefile
-fi
-
-# 6. 修改设备列表（优化后的版本）
-# 先移除所有TARGET_DEVICES行
-sed -i '/^TARGET_DEVICES/d' target/linux/bcm53xx/image/Makefile
-
-# 添加我们需要的设备
-echo "TARGET_DEVICES += netgear_r7000" >> target/linux/bcm53xx/image/Makefile
+# 4. 确保目标netgear_r7000存在
+shopt -s extglob
+SHELL_FOLDER=$(dirname $(readlink -f "$0"))
+sed -i "s/^TARGET_DEVICES /# TARGET_DEVICES /" target/linux/bcm53xx/image/Makefile
+sed -i "s/# TARGET_DEVICES += netgear_r7000/TARGET_DEVICES += netgear_r7000/" target/linux/bcm53xx/image/Makefile
 
 # 7. 验证修改结果
 echo "=== 验证修改结果 ==="
