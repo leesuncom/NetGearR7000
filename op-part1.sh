@@ -12,6 +12,8 @@
 
 # microsocks
 git clone https://github.com/leesuncom/luci-app-microsocks.git feeds/luci/applications/luci-app-microsocks
+./scripts/feeds update luci  # 更新 luci 相关 feeds
+./scripts/feeds install luci-app-microsocks  # 安装插件到编译环境
 
 # replace luci-theme-argon to lastest update
 rm -rf feeds/smpackage/luci-theme-argon feeds/smpackage/luci-app-argon-config
