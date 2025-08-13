@@ -39,6 +39,8 @@ sed -i "s/# TARGET_DEVICES += netgear_r7000/TARGET_DEVICES += netgear_r7000/" ta
 
 # 7. 验证修改结果
 echo "=== 验证修改结果 ==="
+echo "IP:"
+grep "192.168.3.2'" package/base-files/files/bin/config_generate
 echo "主机名:"
 grep "hostname='R7000'" package/base-files/files/bin/config_generate
 echo -e "\n时区:"
