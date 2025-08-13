@@ -21,3 +21,9 @@ sed -i 's/ImmortalWrt/R7000/g' package/base-files/files/bin/config_generate
 
 # 发布固件名称添加日期
 sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
+
+# 启用该设备的编译支持
+shopt -s extglob
+SHELL_FOLDER=$(dirname $(readlink -f "$0"))
+sed -i "s/^TARGET_DEVICES /# TARGET_DEVICES /" target/linux/bcm53xx/image/Makefile
+sed "s/# TARGET_DEVICES += netgear_r7000/TARGET_DEVICES += netgear_r7000/" target/linux/bcm53xx/image/Makefile
