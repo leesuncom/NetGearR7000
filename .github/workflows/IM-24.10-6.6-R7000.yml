@@ -232,7 +232,7 @@ jobs:
           - 💻 Platform Arch: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.DEVICE_ARCH }}
           - ⚽ Firmware Code: ${{ env.REPO_URL }}
           - 💝 Branch: ${{ env.REPO_BRANCH }}
-          - 🚀 Kernel: 6.6
+          - 🚀 Kernel: immortalwrt6.6
           - 🌐 Default Address: 192.168.1.1
           - 🔑 Default Password: root/password
           ### 🚀 Included Mods
