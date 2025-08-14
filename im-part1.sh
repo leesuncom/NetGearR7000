@@ -48,5 +48,4 @@ git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/lu
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
-rm -rf package/system/fstools
-git_clone_path master https://github.com/coolsnowwolf/lede package/system/fstools
+
