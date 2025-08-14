@@ -29,149 +29,21 @@ fi
 
 sed -i.bak "s,https://downloads.immortalwrt.org,$opkg_mirror,g" "/etc/opkg/distfeeds.conf"
 
-# 部署smartdns基础配置文件
-if ! uci -q get system.@imm_init[0].smartdns_conf > "/dev/null"; then
-	if [ -f "/common/etc/smartdns/custom.conf" ]; then
-		cp -f /common/etc/smartdns/custom.conf /etc/smartdns/custom.conf
-		chmod 644 /etc/smartdns/custom.conf
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].smartdns_conf="1"
-		commit system
-	EOF
-fi
-
-# 部署cloudflare-ipv4.txt
-if ! uci -q get system.@imm_init[0].smartdns_cloudflare > "/dev/null"; then
-	if [ -f "/common/etc/smartdns/cloudflare-ipv4.txt" ]; then
-		cp -f /common/etc/smartdns/cloudflare-ipv4.txt /etc/smartdns/cloudflare-ipv4.txt
-		chmod 644 /etc/smartdns/cloudflare-ipv4.txt
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].smartdns_cloudflare="1"
-		commit system
-	EOF
-fi
-
-# 部署domain-set目录及子文件
-if ! uci -q get system.@imm_init[0].smartdns_domainset > "/dev/null"; then
-	if [ -f "/common/etc/smartdns/domain-set/domains.china.smartdns.conf" ]; then
-		cp -f /common/etc/smartdns/domain-set/domains.china.smartdns.conf /etc/smartdns/domain-set/domains.china.smartdns.conf
-		chmod 644 /etc/smartdns/domain-set/domains.china.smartdns.conf
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].smartdns_domainset="1"
-		commit system
-	EOF
-fi
-
-# 部署microsocks配置文件
-if ! uci -q get system.@imm_init[0].microsocks_conf > "/dev/null"; then
-	if [ -f "/common/etc/config/microsocks" ]; then
-		cp -f /common/etc/config/microsocks /etc/config/microsocks
-		chmod 644 /etc/config/microsocks
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].microsocks_conf="1"
-		commit system
-	EOF
-fi
-
-# 新增：部署/etc/config/目录下的配置文件
-# 1. dhcp配置
-if ! uci -q get system.@imm_init[0].config_dhcp > "/dev/null"; then
-	if [ -f "/common/etc/config/dhcp" ]; then
-		cp -f /common/etc/config/dhcp /etc/config/dhcp
-		chmod 644 /etc/config/dhcp
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_dhcp="1"
-		commit system
-	EOF
-fi
-
-# 2. firewall配置
-if ! uci -q get system.@imm_init[0].config_firewall > "/dev/null"; then
-	if [ -f "/common/etc/config/firewall" ]; then
-		cp -f /common/etc/config/firewall /etc/config/firewall
-		chmod 644 /etc/config/firewall
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_firewall="1"
-		commit system
-	EOF
-fi
-
-# 3. luci配置
-if ! uci -q get system.@imm_init[0].config_luci > "/dev/null"; then
-	if [ -f "/common/etc/config/luci" ]; then
-		cp -f /common/etc/config/luci /etc/config/luci
-		chmod 644 /etc/config/luci
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_luci="1"
-		commit system
-	EOF
-fi
-
-# 4. network配置
-if ! uci -q get system.@imm_init[0].config_network > "/dev/null"; then
-	if [ -f "/common/etc/config/network" ]; then
-		cp -f /common/etc/config/network /etc/config/network
-		chmod 644 /etc/config/network
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_network="1"
-		commit system
-	EOF
-fi
-
-# 5. mosdns配置
-if ! uci -q get system.@imm_init[0].config_mosdns > "/dev/null"; then
-	if [ -f "/common/etc/config/mosdns" ]; then
-		cp -f /common/etc/config/mosdns /etc/config/mosdns
-		chmod 644 /etc/config/mosdns
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_mosdns="1"
-		commit system
-	EOF
-fi
-
-# 6. system配置
-if ! uci -q get system.@imm_init[0].config_system > "/dev/null"; then
-	if [ -f "/common/etc/config/system" ]; then
-		cp -f /common/etc/config/system /etc/config/system
-		chmod 644 /etc/config/system
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_system="1"
-		commit system
-	EOF
-fi
-
-# 7. smartdns配置
-if ! uci -q get system.@imm_init[0].config_smartdns > "/dev/null"; then
-	if [ -f "/common/etc/config/smartdns" ]; then
-		cp -f /common/etc/config/smartdns /etc/config/smartdns
-		chmod 644 /etc/config/smartdns
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_smartdns="1"
-		commit system
-	EOF
-fi
-
-# 8. upnpd配置
-if ! uci -q get system.@imm_init[0].config_upnpd > "/dev/null"; then
-	if [ -f "/common/etc/config/upnpd" ]; then
-		cp -f /common/etc/config/upnpd /etc/config/upnpd
-		chmod 644 /etc/config/upnpd
-	fi
-	uci -q batch <<-EOF
-		set system.@imm_init[0].config_upnpd="1"
-		commit system
-	EOF
-fi
+# 设置配置文件的部署标记（所有文件在构建时已直接部署）
+uci -q batch <<-EOF
+    set system.@imm_init[0].smartdns_conf="1"
+    set system.@imm_init[0].smartdns_cloudflare="1"
+    set system.@imm_init[0].smartdns_domainset="1"
+    set system.@imm_init[0].microsocks_conf="1"
+    set system.@imm_init[0].config_dhcp="1"
+    set system.@imm_init[0].config_firewall="1"
+    set system.@imm_init[0].config_luci="1"
+    set system.@imm_init[0].config_network="1"
+    set system.@imm_init[0].config_mosdns="1"
+    set system.@imm_init[0].config_system="1"
+    set system.@imm_init[0].config_smartdns="1"
+    set system.@imm_init[0].config_upnpd="1"
+    commit system
+EOF
 
 exit 0
