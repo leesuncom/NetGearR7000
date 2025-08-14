@@ -63,23 +63,7 @@ jobs:
         
     - name: Checkout
       uses: actions/checkout@main
-
-    # 新添加的步骤：创建并复制 common 目录
-    - name: Prepare common directory
-      run: |
-        cd openwrt
-        # 创建 common 目录（如果不存在）
-        mkdir -p common
-        
-        # 将 common 目录复制到 openwrt 目录
-        # 使用 -f 强制覆盖已存在的文件
-        # 使用 -v 显示复制过程（可选）
-        cp -rfv ../common/* common/ || true
-        
-        # 验证复制结果
-        echo "Copied common directory contents:"
-        ls -la openwrt/common || echo "No common directory found"
-
+      
     - name: Clone source code
       run: |
         df -hT $GITHUB_WORKSPACE
@@ -132,7 +116,11 @@ jobs:
         chmod +x $DIY_P0_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P0_SH
-
+        mkdir -p common
+        cp -rfv ../common/* common/ || true
+        echo "Copied common directory contents:"
+        ls -la common || echo "No common directory found"
+        
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
 
