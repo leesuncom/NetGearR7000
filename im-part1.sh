@@ -47,7 +47,7 @@ git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/lu
 # git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
-wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
+# wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
 
 
 
