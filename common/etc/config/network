@@ -6,7 +6,7 @@ config interface 'loopback'
 	option netmask '255.0.0.0'
 
 config globals 'globals'
-	option ula_prefix 'fdf4:3b28:87c::/48'
+	option ula_prefix 'fd27:208:47cb::/48'
 	option packet_steering '1'
 
 config device
@@ -16,17 +16,19 @@ config device
 	list ports 'lan2'
 	list ports 'lan3'
 	list ports 'lan4'
+	option ipv6 '0'
 
 config interface 'lan'
 	option device 'br-lan'
 	option proto 'static'
 	option ipaddr '192.168.3.2'
 	option netmask '255.255.255.0'
-	option ip6assign '60'
 	option gateway '192.168.3.1'
 	list dns '127.0.0.1'
+	option delegate '0'
 
 config device
 	option name 'wan'
 	option macaddr '10:DA:43:D0:20:65'
+	option ipv6 '0'
 
