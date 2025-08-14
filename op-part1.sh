@@ -49,8 +49,9 @@ git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/lu
 # sed -i 's/1.2024.45/1.2024.46/g' feeds/luci/applications/luci-app-smartdns/Makefile
 
 # goland 2.1 to golang 2.2
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
+# rm -rf feeds/packages/lang/golang
+# git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
+wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 
