@@ -92,11 +92,6 @@ jobs:
         DEVICE_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '"' '{print $2}')
         echo "DEVICE_ARCH=$DEVICE_ARCH" >> $GITHUB_ENV
         
-    - name: Modify image prefix with timestamp
-      run: |
-        cd openwrt
-        sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
-        
         # 验证修改
         echo "Modified IMG_PREFIX definition:"
         grep '^IMG_PREFIX\:' include/image.mk
@@ -145,7 +140,8 @@ jobs:
         chmod +x $DIY_P2_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P2_SH
-        
+        sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
+
     - name: Download package
       id: package
       run: |
