@@ -11,9 +11,9 @@
 #
 
 # replace luci-theme-argon to lastest update
-rm -rf feeds/smpackage/luci-theme-argon feeds/smpackage/luci-app-argon-config
-git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/smpackage/luci-theme-argon
-git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/smpackage/luci-app-argon-config
+# rm -rf feeds/smpackage/luci-theme-argon feeds/smpackage/luci-app-argon-config
+# git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/smpackage/luci-theme-argon
+# git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/smpackage/luci-app-argon-config
 
 # 移除 openwrt feeds 自带的核心库
 # rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
@@ -33,14 +33,12 @@ git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 
 # replace smartdns to lastest update
-rm -rf feeds/packages/net/{alist,adguardhome,smartdns}
-rm -rf feeds/smpackage/{alist,adguardhome,smartdns}
-rm -rf feeds/luci/applications/luci-app-smartdns
-rm -rf feeds/smpackage/luci-app-smartdns
-git clone https://github.com/pymumu/openwrt-smartdns feeds/packages/net/smartdns
-# sed -i 's/1.2024.45/1.2024.46.0.13/g' feeds/packages/net/smartdns/Makefile
-git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/luci-app-smartdns
-# sed -i 's/1.2024.45/1.2024.46/g' feeds/luci/applications/luci-app-smartdns/Makefile
+# rm -rf feeds/luci/applications/luci-app-smartdns
+# rm -rf feeds/packages/net/{alist,adguardhome,smartdns}
+# rm -rf feeds/smpackage/{alist,adguardhome,smartdns}
+# rm -rf feeds/smpackage/luci-app-smartdns
+# git clone https://github.com/pymumu/openwrt-smartdns feeds/packages/net/smartdns
+# git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/luci-app-smartdns
 
 # goland 2.1 to golang 2.2
 # rm -rf feeds/packages/lang/golang
