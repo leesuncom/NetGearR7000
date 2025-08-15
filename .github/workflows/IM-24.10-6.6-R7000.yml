@@ -95,7 +95,6 @@ jobs:
     - name: Modify image prefix with timestamp
       run: |
         cd openwrt
-        # 修改镜像前缀定义，添加日期时间戳
         sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
         
         # 验证修改
