@@ -19,6 +19,7 @@ cat /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-li
 
 # Update address.conf
 curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf > common/etc/smartdns/address.conf
+curl -sS https://www.cloudflare.com/ips-v4/# > common/etc/smartdns/cloudflare-ipv4.txt
 
 # Update China IPV4 List
 qqwry="$(curl -kLfsm 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)"
