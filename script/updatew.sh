@@ -22,7 +22,7 @@ curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf
 curl -sS https://www.cloudflare.com/ips-v4/# > common/etc/smartdns/cloudflare-ipv4.txt
 
 # 引入配置 conf-file /etc/smartdns/anti-ad-smartdns.conf
-curl -L https://anti-ad.net/anti-ad-for-smartdns.conf -o common/etc/smartdn/conf/anti-ad-smartdns.conf
+curl -L https://anti-ad.net/anti-ad-for-smartdns.conf > common/etc/smartdn/conf/anti-ad-smartdns.conf
 
 # 获取1.0.0.1的SPKI，并按指定格式写入spki文件
 echo "spki_cloudflare: $(echo | openssl s_client -connect '1.0.0.1:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" > common/etc/smartdns/spki
