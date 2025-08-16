@@ -113,6 +113,7 @@ jobs:
         mkdir -p files/etc/config
         mkdir -p files/etc/smartdns
         echo "Copying config files..."
+        cp -rfv ../common/etc/hosts.sh files/etc/ || true     
         cp -rfv ../common/etc/config/* files/etc/config/ || true     
         echo "Copying smartdns files..."
         cp -rfv ../common/etc/smartdns/* files/etc/smartdns/ || true  
