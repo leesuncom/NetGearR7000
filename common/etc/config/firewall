@@ -12,8 +12,18 @@ config zone
 	option input 'ACCEPT'
 	option output 'ACCEPT'
 	option forward 'ACCEPT'
-	option masq '1'
 	list network 'lan'
+	option masq '1'
+
+config rule
+	option name 'Allow-DHCP-Server'
+	option src 'lan'
+	option proto 'udp'
+	option src_port '68'
+	option dest_port '67'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
 
 config rule
 	option name 'Allow-ICMP'
