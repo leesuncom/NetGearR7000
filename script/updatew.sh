@@ -24,8 +24,11 @@ curl -sS https://www.cloudflare.com/ips-v4/# > common/etc/smartdns/cloudflare-ip
 # 引入配置 conf-file /etc/smartdns/anti-ad-smartdns.conf
 curl -L https://anti-ad.net/anti-ad-for-smartdns.conf -o common/etc/smartdn/conf/anti-ad-smartdns.conf
 
-# 获取 SPKI
+# 获取 1.0.0.1 的 SPKI 并写入文件（若文件不存在则创建）
 echo | openssl s_client -connect '1.0.0.1:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 > common/etc/smartdns/spki
+
+# 获取 8.8.8.8 的 SPKI 并追加到文件（不覆盖原有内容）
+echo | openssl s_client -connect '8.8.8.8:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64 >> common/etc/smartdns/spki
 
 # Update China IPV4 List
 qqwry="$(curl -kLfsm 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)"
