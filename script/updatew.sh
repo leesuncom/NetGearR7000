@@ -13,7 +13,7 @@ curl -sS https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/
 cat /tmp/temp_gfwlist1 /tmp/temp_gfwlist2 /tmp/temp_gfwlist3 script/cust_gfwdomain.conf | \
     sort -u | sed 's/^\.*//g' > /tmp/temp_gfwlist
 cat /tmp/temp_gfwlist | sed -e '/^$/d' > /tmp/proxy-domain-list.conf
-sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/proxy/g" -i /tmp/proxy-domain-list.conf
+sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/oversea/g" -i /tmp/proxy-domain-list.conf
 # cat script/gfw_group.conf /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-list.conf
 cat /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-list.conf
 
