@@ -14,18 +14,18 @@ cat /tmp/temp_gfwlist1 /tmp/temp_gfwlist2 /tmp/temp_gfwlist3 script/cust_gfwdoma
     sort -u | sed 's/^\.*//g' > /tmp/temp_gfwlist
 cat /tmp/temp_gfwlist | sed -e '/^$/d' > /tmp/proxy-domain-list.conf
 sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/proxy/g" -i /tmp/proxy-domain-list.conf
-# cat script/gfw_group.conf /tmp/proxy-domain-list.conf > conf/domain-set/proxy-domain-list.conf
-cat /tmp/proxy-domain-list.conf > conf/domain-set/proxy-domain-list.conf
+# cat script/gfw_group.conf /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-list.conf
+cat /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-list.conf
 
 # Update address.conf
-curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf > conf/address.conf
+curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf > common/etc/smartdns/address.conf
 
 # Update China IPV4 List
 qqwry="$(curl -kLfsm 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)"
 ipipnet="$(curl -kLfsm 5 https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt)"
 clang="$(curl -kLfsm 5 https://ispip.clang.cn/all_cn.txt)"
 iplist="$qqwry\n$ipipnet\n$clang"
-echo -e "${iplist}" | sort | uniq |sed -e '/^$/d' -e 's/^/blacklist-ip /g' > conf/blacklist-ip.conf
+echo -e "${iplist}" | sort | uniq |sed -e '/^$/d' -e 's/^/blacklist-ip /g' > common/etc/smartdns/blacklist-ip.conf
 
 # Update China List
 accelerated_domains="$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf)"
@@ -34,4 +34,4 @@ google="$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-ch
 domain_list="$accelerated_domains\n$apple\n$google"
 echo -e "${domain_list}" | sort | uniq |sed -e 's/#.*//g' -e '/^$/d' -e 's/server=\///g' -e 's/\/114.114.114.114//g' | sort -u > /tmp/domains.china.smartdns.conf
 sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/china/g" -i /tmp/domains.china.smartdns.conf
-cat /tmp/domains.china.smartdns.conf > conf/domain-set/domains.china.smartdns.conf
+cat /tmp/domains.china.smartdns.conf > common/etc/smartdns/domain-set/domains.china.smartdns.conf
