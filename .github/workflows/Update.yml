@@ -2,7 +2,6 @@ name: Update
 
 on:
   workflow_dispatch:
-
   schedule:
     - cron: 0 4 */3 * *
 
@@ -12,11 +11,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          token: ${{ secrets.REPO_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}  # 🔑 Use default GitHub token
+
       - name: Smartdns conf List
         run: |
           bash script/updatew.sh
-          
+
       - name: Push
         id: list-push
         uses: stefanzweifel/git-auto-commit-action@v4
