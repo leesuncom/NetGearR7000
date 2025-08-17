@@ -10,6 +10,10 @@
 # This is free software, licensed under the MIT License.
 # See /LICENSE for more information.
 #
+
+# 发布固件名称添加日期
+sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
+
 sed -i 's/\(luci-app-vsftpd \|luci-app-filetransfer \|luci-app-accesscontrol \|luci-app-autoreboot \|ddns-scripts_dnspod \|ddns-scripts_aliyun \|luci-app-ddns \|block-mount \|luci-app-nlbwmon \|luci-app-wol \)//g' include/target.mk
 #sed 's/luci-app-vsftpd //g' include/target.mk
 #sed 's/luci-app-filetransfer //g' include/target.mk
@@ -27,10 +31,8 @@ sed -i 's/\(luci-app-vsftpd \|luci-app-filetransfer \|luci-app-accesscontrol \|l
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
 # Modify hostname Modify default IP
-sed -e 's/192.168.1.1/192.168.3.2/g' -e 's/LEDE/R7000/g' package/base-files/files/bin/config_generate
+sed -e 's/192.168.1.1/192.168.3.3/g' -e 's/LEDE/R619AC/g' package/base-files/files/bin/config_generate
 #sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 #sed -i 's/LEDE/R7000/g' package/base-files/files/bin/config_generate
 
-# 发布固件名称添加日期
-sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
