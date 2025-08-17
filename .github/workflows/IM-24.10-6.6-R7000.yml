@@ -113,10 +113,12 @@ jobs:
         mkdir -p files/etc/config
         mkdir -p files/etc/smartdns
         mkdir -p files/etc/opkg
+        mkdir -p files/etc/crontabs
         SRC_DIR="../common/etc"
         echo "Copying files..."
+        cp -rfv $SRC_DIR/crontabs/* files/etc/crontabs/ || true
         cp -rfv $SRC_DIR/opkg/* files/etc/opkg/ || true
-        cp -rfv $SRC_DIR/hosts files/etc/ || true     
+        cp -rfv $SRC_DIR/hosts.sh files/etc/ || true     
         cp -rfv $SRC_DIR/config/* files/etc/config/ || true     
         cp -rfv $SRC_DIR/smartdns/* files/etc/smartdns/ || true  
         echo "Copied configuration files:"
