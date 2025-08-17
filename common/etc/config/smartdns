@@ -16,7 +16,7 @@ config smartdns
 	option force_https_soa '0'
 	option rr_ttl_min '600'
 	option seconddns_port '6553'
-	option seconddns_tcp_server '1'
+	option seconddns_tcp_server '0'
 	option log_output_mode 'file'
 	option old_port '53'
 	option old_enabled '1'
