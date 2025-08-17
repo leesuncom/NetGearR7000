@@ -10,16 +10,14 @@
 # See /LICENSE for more information.
 #
 
-# microsocks
-#rm -rf feeds/luci/applications/luci-app-microsocks
-#git clone https://github.com/leesuncom/luci-app-microsocks.git feeds/luci/applications/luci-app-microsocks
-#./scripts/feeds update luci  # 更新 luci 相关 feeds
-#./scripts/feeds install luci-app-microsocks  # 安装插件到编译环境
 
 # replace luci-theme-argon to lastest update
-rm -rf feeds/smpackage/luci-theme-argon feeds/smpackage/luci-app-argon-config
-git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/smpackage/luci-theme-argon
-git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/smpackage/luci-app-argon-config
+rm -rf feeds/luci/applications/luci-app-argon-config
+rm -rf feeds/packages/theme/luci-theme-argon 
+rm -rf feeds/smpackage/luci-theme-argon 
+rm -rf feeds/smpackage/luci-app-argon-config
+git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/packages/theme/luci-theme-argon
+git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/luci/applications/luci-app-argon-config
 
 # 移除 openwrt feeds 自带的核心库
 rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
@@ -36,7 +34,7 @@ rm -rf feeds/luci/applications/luci-app-mosdns
 rm -rf feeds/packages/utils/v2dat
 rm -rf feeds/packages/net/v2ray-geodata
 git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
-git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+git clone https://github.com/sbwml/v2ray-geodata package/mosdns/v2ray-geodata
 
 # replace smartdns to lastest update
 rm -rf feeds/packages/net/{alist,adguardhome,smartdns}
