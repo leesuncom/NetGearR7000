@@ -10,7 +10,7 @@
 # See /LICENSE for more information.
 #
 
-name: LE-23.05-6.6-R7000
+name: IM-24.10.2-6.6-R619AC
 
 on:
   repository_dispatch:
@@ -158,3 +158,4 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
