@@ -42,12 +42,10 @@ rm -rf feeds/smpackage/{alist,adguardhome,smartdns}
 rm -rf feeds/luci/applications/luci-app-smartdns
 rm -rf feeds/smpackage/luci-app-smartdns
 git clone https://github.com/pymumu/openwrt-smartdns feeds/packages/net/smartdns
-# sed -i 's/1.2024.45/1.2024.46.0.13/g' feeds/packages/net/smartdns/Makefile
 git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/luci-app-smartdns
-# sed -i 's/1.2024.45/1.2024.46/g' feeds/luci/applications/luci-app-smartdns/Makefile
 
 # goland 2.1 to golang 2.2
 # rm -rf feeds/packages/lang/golang
-# git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
-wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+# wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
