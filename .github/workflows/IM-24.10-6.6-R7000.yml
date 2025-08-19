@@ -9,10 +9,10 @@ env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
   REPO_BRANCH: openwrt-24.10
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: im-6.6.config
-  DIY_P0_SH: im-part0.sh
-  DIY_P1_SH: im-part1.sh
-  DIY_P2_SH: im-part2.sh
+  CONFIG_FILE: r7000im-6.6.config
+  DIY_P0_SH: r7000im-part0.sh
+  DIY_P1_SH: r7000im-part1.sh
+  DIY_P2_SH: r7000im-part2.sh
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
