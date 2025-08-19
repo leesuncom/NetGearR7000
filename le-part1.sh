@@ -45,8 +45,9 @@ git clone https://github.com/pymumu/openwrt-smartdns feeds/packages/net/smartdns
 git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/luci-app-smartdns
 
 # 升级 Golang 到 1.24+（替换旧版本）
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
+# rm -rf feeds/packages/lang/golang
+wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+# git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 ls -la feeds/packages/lang/golang || echo "Golang 目录克隆失败"
 cat feeds/packages/lang/golang/Makefile | grep "PKG_VERSION" || echo "未找到版本信息"
 
