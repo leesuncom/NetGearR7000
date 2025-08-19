@@ -48,8 +48,7 @@ git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/lu
 # rm -rf feeds/packages/lang/golang
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 # git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
-ls -la feeds/packages/lang/golang || echo "Golang 目录克隆失败"
-cat feeds/packages/lang/golang/Makefile | grep "PKG_VERSION" || echo "未找到版本信息"
+cat feeds/packages/lang/golang/golang/Makefile | grep "PKG_VERSION" || echo "未找到版本信息"
 
 
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
