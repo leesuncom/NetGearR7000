@@ -20,12 +20,12 @@ git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/packages/theme
 git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/luci/applications/luci-app-argon-config
 
 # 移除 openwrt feeds 自带的核心库
-rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
-git clone https://github.com/xiaorouji/openwrt-passwall-packages package/passwall-packages
+#rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-#obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
+#git clone https://github.com/xiaorouji/openwrt-passwall-packages package/passwall-packages
 
 # 移除 openwrt feeds 过时的luci版本
-rm -rf feeds/luci/applications/luci-app-passwall
-git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
+#rm -rf feeds/luci/applications/luci-app-passwall
+#git clone https://github.com/xiaorouji/openwrt-passwall package/passwall-luci
 
 # replace MOSdns to lastest update
 rm -rf feeds/smpackage/luci-app-mosdns
@@ -49,7 +49,5 @@ git clone https://github.com/pymumu/luci-app-smartdns feeds/luci/applications/lu
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 # git clone https://github.com/sbwml/packages_lang_golang -b 24.x feeds/packages/lang/golang
 cat feeds/packages/lang/golang/golang/Makefile | grep "PKG_VERSION" || echo "未找到版本信息"
-
-
 # git clone https://github.com/smpackagek8/golang feeds/packages/lang/golang
 # wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
