@@ -1,4 +1,4 @@
-name: IM-24.10-6.6-R7000
+name: IM-24.10-6.6-R619AC
 
 on:
   repository_dispatch:
