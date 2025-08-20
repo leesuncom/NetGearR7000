@@ -21,7 +21,11 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 
 # Modify hostname
 sed -i 's/ImmortalWrt/R619AC/g' package/base-files/files/bin/config_generate
+sed -i -e "s/odhcp6c/#odhcp6c/" -e "s/odhcpd-ipv6only/#odhcpd-ipv6only/" -e "s/luci-app-cpufreq/#luci-app-cpufreq/" -e "s/procd-ujail//" include/target.mk
 
-sed -i "s/procd-ujail//" include/target.mk
+#sed -i "s/odhcp6c/#odhcp6c/" include/target.mk
+#sed -i "s/odhcpd-ipv6only/#odhcpd-ipv6only/" include/target.mk
+#sed -i "s/luci-app-cpufreq/#luci-app-cpufreq/" include/target.mk
+#sed -i "s/procd-ujail//" include/target.mk
 
 # wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
