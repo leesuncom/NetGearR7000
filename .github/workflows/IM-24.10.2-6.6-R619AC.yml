@@ -114,7 +114,7 @@ jobs:
         mkdir -p files/etc/smartdns
         mkdir -p files/etc/opkg
         mkdir -p files/etc/crontabs
-        SRC_DIR="../common/etc"
+        SRC_DIR="../r619ac/etc"
         echo "Copying files..."
         cp -rfv $SRC_DIR/crontabs/* files/etc/crontabs/ || true
         cp -rfv $SRC_DIR/opkg/* files/etc/opkg/ || true
