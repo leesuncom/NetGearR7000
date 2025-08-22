@@ -10,25 +10,46 @@
 # See /LICENSE for more information.
 #
 
+
 # 发布固件名称添加日期
 # sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
-# Modify default IP
+# 修改默认IP地址
 sed -i 's/192.168.1.1/192.168.3.2/g' package/base-files/files/bin/config_generate
 
-# Modify default theme
-sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
+# 修改默认主题
+sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' luci/collections/luci/Makefile
 
-# Modify hostname
-sed -i 's/ImmortalWrt/R7000/g' feeds/package/base-files/files/bin/config_generate
-rm -rf feeds/package/libs/openssl feeds/package/network/services/ppp
-git_clone_path openwrt-24.10 https://github.com/immortalwrt/immortalwrt feeds/package/libs/openssl feeds/package/network/services/ppp
-sed -i "s/procd-ujail//" feeds/include/target.mk
+# 修改主机名
+sed -i 's/ImmortalWrt/R7000/g' package/base-files/files/bin/config_generate
+
+# 移除procd-ujail
+sed -i "s/procd-ujail//" include/target.mk
+
+# 修改终端启动行为
 sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" feeds/target/linux/*/base-files/etc/inittab
-git_clone_path master https://github.com/coolsnowwolf/lede mv target/linux/generic/hack-6.6
+
+# 克隆并移动内核hack补丁
+rm -rf target/linux/generic/hack-6.6
+git clone -b master --depth 1 https://github.com/coolsnowwolf/lede temp-lede-repo
+mv temp-lede-repo/target/linux/generic/hack-6.6 target/linux/generic/
+rm -rf temp-lede-repo
+
+# 替换fstools包
 rm -rf feeds/package/system/fstools
-git_clone_path master https://github.com/coolsnowwolf/lede package/system/fstools
+git_clone_path master https://github.com/coolsnowwolf/lede \
+    package/system/fstools
+
+# 移除特定补丁
 rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
-wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
+
+# 下载netfilter补丁
+wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch \
+    -P target/linux/generic/pending-6.6/
+
+# 移除jool包
 rm -rf package/feeds/packages/jool
-# wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
+
+# 下载默认设置文件（已注释，如需启用请移除#）
+# wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese \
+#     -P feeds/package/emortal/default-settings/files/
