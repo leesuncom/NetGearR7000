@@ -6,7 +6,7 @@
 # Blog: https://p3terx.com
 #=================================================
 
-name: Build OpenWrt R7000
+name: OP-24.10-6.6-R7000
 
 on: 
   repository_dispatch:
