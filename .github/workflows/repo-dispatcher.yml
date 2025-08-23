@@ -22,7 +22,7 @@ on:
         default: ''
 
 env:
-  REPO_TOKEN: ${{ secrets.REPO_TOKEN }}
+  REPO_R7000: ${{ secrets.REPO_R7000 }}
   TZ: Asia/Shanghai
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
       if: contains(github.event.inputs.param, 'cw')
       with:
         workflow_id: all
-        access_token: ${{ secrets.REPO_TOKEN }}
+        access_token: ${{ secrets.REPO_R7000 }}
 
     - name: Load Settings.ini
       run: |
@@ -50,13 +50,13 @@ jobs:
 
     - name: Trigger Packages Update
       run: |
-        gitdate=$(curl -H "Authorization: token ${{ secrets.REPO_TOKEN }}" -s "https://api.github.com/repos/kiddin9/kwrt-packages/actions/runs" | jq -r '.workflow_runs[0].created_at')
+        gitdate=$(curl -H "Authorization: token ${{ secrets.REPO_R7000 }}" -s "https://api.github.com/repos/kiddin9/kwrt-packages/actions/runs" | jq -r '.workflow_runs[0].created_at')
         gitdate=$(date -d "$gitdate" +%s)
         now=$(date -d "$(date)" +%s)
         if [[ $(expr $gitdate + 120) < $now ]]; then
         curl -X POST https://api.github.com/repos/kiddin9/kwrt-packages/dispatches \
         -H "Accept: application/vnd.github.everest-preview+json" \
-        -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+        -H "Authorization: token ${{ secrets.REPO_R7000 }}" \
         --data '{"event_type": "update"}'
         fi
 
@@ -66,5 +66,5 @@ jobs:
           curl \
           -X POST https://api.github.com/repos/${{ github.repository }}/dispatches \
           -H "Accept: application/vnd.github.everest-preview+json" \
-          -H "Authorization: token ${{ secrets.REPO_TOKEN }}" \
+          -H "Authorization: token ${{ secrets.REPO_R7000 }}" \
           -d '{"event_type": "bcm53xx ${{ github.event.inputs.param }}", "client_payload": {"target": "bcm53xx"}}'          
