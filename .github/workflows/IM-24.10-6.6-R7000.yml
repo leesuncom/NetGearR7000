@@ -120,7 +120,8 @@ jobs:
         cp -rfv $SRC_DIR/opkg/* files/etc/opkg/ || true
         cp -rfv $SRC_DIR/hosts.sh files/etc/ || true
         chmod 755 files/etc/hosts.sh || true
-        echo "Set permissions 755 for files/etc/hosts.sh"      
+        echo "Set permissions 755 for files/etc/hosts.sh" 
+        cp -rfv $SRC_DIR/inittab files/etc/ || true     
         cp -rfv $SRC_DIR/config/* files/etc/config/ || true     
         cp -rfv $SRC_DIR/smartdns/* files/etc/smartdns/ || true  
         echo "Copied configuration files:"
