@@ -28,7 +28,8 @@ if [ -z "$opkg_mirror" ]; then
 fi
 
 sed -i.bak "s,https://downloads.immortalwrt.org,$opkg_mirror,g" "/etc/opkg/distfeeds.conf"
-
+sed -i -e 's/ImmortalWrt/Openwrt/' -e 's/LuCI [^ ]*/LeeSun/g' -e '/luciversion/d' /usr/lib/lua/luci/version.lua
+echo "luciversion ='$(date +'%m.%d')'" >> /usr/lib/lua/luci/version.lua
 # 设置配置文件的部署标记（所有文件在构建时已直接部署）
 uci -q batch <<-EOF
     set system.@imm_init[0].smartdns_conf="1"
