@@ -13,7 +13,7 @@ curl -sS https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/
 cat /tmp/temp_gfwlist1 /tmp/temp_gfwlist2 /tmp/temp_gfwlist3 script/cust_gfwdomain.conf | \
     sort -u | sed 's/^\.*//g' > /tmp/temp_gfwlist
 cat /tmp/temp_gfwlist | sed -e '/^$/d' > /tmp/proxy-domain-list.conf
-sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/oversea/g" -i /tmp/proxy-domain-list.conf
+sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/ -group oversea/g" -i /tmp/proxy-domain-list.conf
 # cat script/gfw_group.conf /tmp/proxy-domain-list.conf > r619ac/etc/smartdns/domain-set/proxy-domain-list.conf
 cat /tmp/proxy-domain-list.conf > r619ac/etc/smartdns/domain-set/proxy-domain-list.conf
 cat /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-list.conf
@@ -58,7 +58,7 @@ apple="$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-chi
 google="$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf)"
 domain_list="$accelerated_domains\n$apple\n$google"
 echo -e "${domain_list}" | sort | uniq |sed -e 's/#.*//g' -e '/^$/d' -e 's/server=\///g' -e 's/\/114.114.114.114//g' | sort -u > /tmp/domains.china.smartdns.conf
-sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/china/g" -i /tmp/domains.china.smartdns.conf
+sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/ -group china/g" -i /tmp/domains.china.smartdns.conf
 cat /tmp/domains.china.smartdns.conf > r619ac/etc/smartdns/domain-set/domains.china.smartdns.conf
 cat /tmp/domains.china.smartdns.conf > common/etc/smartdns/domain-set/domains.china.smartdns.conf
 
