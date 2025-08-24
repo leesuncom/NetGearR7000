@@ -1,3 +1,4 @@
+@ -1,355 +1,355 @@
 #=================================================
 # https://github.com/P3TERX/Actions-OpenWrt
 # Description: Build OpenWrt using GitHub Actions
@@ -6,11 +7,12 @@
 # Blog: https://p3terx.com
 #=================================================
 
+name: OP-24.10-6.6-R7000
 name: Build OpenWrt
 
-on:
+on: 
   repository_dispatch:
-    types: [bcm53xx-build]  # 仅响应 event_type 为 bcm53xx-build 的事件
+
 env:
   REPO_TOKEN: ${{ secrets.REPO_R7000 }}
   PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
