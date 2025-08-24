@@ -8,9 +8,9 @@
 
 name: Build OpenWrt
 
-on: 
+on:
   repository_dispatch:
-
+    types: [bcm53xx-build]  # 仅响应 event_type 为 bcm53xx-build 的事件
 env:
   REPO_TOKEN: ${{ secrets.REPO_R7000 }}
   PPPOE_USERNAME: ${{ secrets.PPPOE_USERNAME }}
