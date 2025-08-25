@@ -1,3 +1,2 @@
-3 3 12 12 * /usr/bin/nginx-util 'check_ssl'
 0 */3 * * * /etc/hosts.sh
-0 5 * * 6 /etc/init.d/smartdns updatefiles
+0 1 * * * /etc/updatew.sh
