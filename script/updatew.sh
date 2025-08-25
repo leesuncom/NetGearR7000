@@ -10,8 +10,9 @@ curl -sS https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.co
 
 curl -sS https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt > /tmp/temp_gfwlist3
 
-cat /tmp/temp_gfwlist1 /tmp/temp_gfwlist2 /tmp/temp_gfwlist3 script/cust_gfwdomain.conf | \
+cat /tmp/temp_gfwlist1 /tmp/temp_gfwlist2 /tmp/temp_gfwlist3  default/extra.conf | \
     sort -u | sed 's/^\.*//g' > /tmp/temp_gfwlist
+
 cat /tmp/temp_gfwlist | sed -e '/^$/d' > /tmp/proxy-domain-list.conf
 sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/oversea/g" -i /tmp/proxy-domain-list.conf
 # cat script/gfw_group.conf /tmp/proxy-domain-list.conf > r619ac/etc/smartdns/domain-set/proxy-domain-list.conf
