@@ -16,7 +16,6 @@ jobs:
       - name: Smartdns conf List
         run: |
           bash script/updatew.sh
-          bash script/hosts.sh
 
       - name: Push
         id: list-push
