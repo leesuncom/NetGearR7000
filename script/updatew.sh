@@ -42,8 +42,8 @@ echo "spki_google: $(echo | openssl s_client -connect '8.8.8.8:853' 2> /dev/null
 echo "spki_DNSPod: $(echo | openssl s_client -connect '120.53.53.53:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
 # 获取 SB公共DNS 的 SPKI 并追加到文件（不覆盖原有内容）
 echo "spki_SB: $(echo | openssl s_client -connect '185.222.222.222:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
-
-
+# 获取 OpenDNS(Cisco) 的 SPKI 并追加到文件（不覆盖原有内容）
+echo "spki_OpenDNS(Cisco): $(echo | openssl s_client -connect '208.67.222.222:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
 
 # Update China IPV4 List
 qqwry="$(curl -kLfsm 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)"
@@ -52,7 +52,6 @@ clang="$(curl -kLfsm 5 https://ispip.clang.cn/all_cn.txt)"
 iplist="$qqwry\n$ipipnet\n$clang"
 echo -e "${iplist}" | sort | uniq |sed -e '/^$/d' -e 's/^/blacklist-ip /g' > r619ac/etc/smartdns/blacklist-ip.conf
 echo -e "${iplist}" | sort | uniq |sed -e '/^$/d' -e 's/^/blacklist-ip /g' > common/etc/smartdns/blacklist-ip.conf
-
 
 # Update China List
 accelerated_domains="$(curl -kLfsm 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf)"
