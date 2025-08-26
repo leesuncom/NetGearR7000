@@ -115,20 +115,9 @@ jobs:
         mkdir -p files/etc/opkg
         mkdir -p files/etc/crontabs
         SRC_DIR="../common/etc"
-        echo "Copying files..."
-        cp -rfv $SRC_DIR/crontabs/* files/etc/crontabs/ || true
-        cp -rfv $SRC_DIR/opkg/* files/etc/opkg/ || true
-        cp -rfv $SRC_DIR/hosts.sh files/etc/ || true
+        cp -rfv $SRC_DIR/* files/etc/ || true
         chmod 755 files/etc/hosts.sh || true
         chmod 755 files/etc/updatew.sh || true
-        echo "Set permissions 755 for files/etc/hosts.sh" 
-        cp -rfv $SRC_DIR/inittab files/etc/ || true     
-        cp -rfv $SRC_DIR/config/* files/etc/config/ || true     
-        cp -rfv $SRC_DIR/smartdns/* files/etc/smartdns/ || true  
-        echo "Copied configuration files:"
-        ls -la files/etc/config || echo "No config files found"
-        echo "Copied smartdns files:"
-        ls -la files/etc/smartdns || echo "No smartdns files found"
         
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
