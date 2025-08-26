@@ -23,12 +23,6 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # 修改主机名
 sed -i 's/ImmortalWrt/R7000/g' package/base-files/files/bin/config_generate
 
-
-
-cd lede
-mv target/linux/generic/hack-6.6 ~/
-
-
 rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
 
