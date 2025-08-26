@@ -5,6 +5,8 @@ config smartdns
 	option port '53'
 	option auto_set_dnsmasq '1'
 	option tcp_server '0'
+	option tls_server '0'
+	option doh_server '0'
 	option ipv6_server '0'
 	option bind_device '0'
 	option dualstack_ip_selection '0'
@@ -15,6 +17,7 @@ config smartdns
 	option rr_ttl_min '600'
 	option seconddns_port '6553'
 	option seconddns_tcp_server '0'
+	option log_output_mode 'file'
 	option old_port '53'
 	option old_enabled '1'
 	option old_auto_set_dnsmasq '1'
@@ -22,6 +25,27 @@ config smartdns
 config domain-rule
 
 config client-rule
+	option enabled '0'
+	option dualstack_ip_selection '0'
+	option force_https_soa '0'
 
 config ip-rule
+
+config download-file
+	option name 'anti-ad-smartdns.conf'
+	option url 'https://anti-ad.net/anti-ad-for-smartdns.conf'
+	option type 'config'
+	option desc '屏蔽广告'
+
+config download-file
+	option name 'domains.china.smartdns.conf'
+	option type 'list'
+	option desc '国内域名'
+	option url 'https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/common/etc/smartdns/domain-set/domains.china.smartdns.conf'
+
+config download-file
+	option name 'proxy-domain-list.conf'
+	option url 'https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/common/etc/smartdns/domain-set/proxy-domain-list.conf'
+	option type 'list'
+	option desc '国外域名'
 
