@@ -24,11 +24,9 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 sed -i 's/ImmortalWrt/R7000/g' package/base-files/files/bin/config_generate
 
 
-git clone https://github.com/coolsnowwolf/lede.git
+
 cd lede
 mv target/linux/generic/hack-6.6 ~/
-cd ..
-rm -rf lede
 
 
 rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
