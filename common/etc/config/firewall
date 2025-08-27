@@ -2,7 +2,7 @@
 config defaults
 	option input 'REJECT'
 	option output 'ACCEPT'
-	option forward 'REJECT'
+	option forward 'ACCEPT'
 	option flow_offloading '1'
 	option flow_offloading_hw '1'
 	option fullcone '1'
@@ -15,15 +15,73 @@ config zone
 	list network 'lan'
 	option masq '1'
 
+config include 'shadowsocksr'
+	option type 'script'
+	option path '/var/etc/shadowsocksr.include'
+	option reload '1'
+
 config rule
-	option name 'Allow-DHCP-Server'
+	option name 'Allow-SmartDNS-China-UDP'
 	option src 'lan'
 	option proto 'udp'
-	option src_port '68'
-	option dest_port '67'
+	option dest_port '6053'
 	option target 'ACCEPT'
 	option family 'ipv4'
 	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-SmartDNS-Oversea-UDP'
+	option src 'lan'
+	option proto 'udp'
+	option dest_port '7053'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-SmartDNS-China-TLS'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '6055'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-SmartDNS-China-HTTPS'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '6057'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-SmartDNS-Oversea-TLS'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '7055'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-SmartDNS-Oversea-HTTPS'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '7057'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.3.2'
+
+config rule
+	option name 'Allow-Loopback'
+	option src 'lan'
+	option proto 'all'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option src_ip '127.0.0.1'
+	option dest_ip '127.0.0.1'
 
 config rule
 	option name 'Allow-ICMP'
@@ -33,62 +91,18 @@ config rule
 	option family 'ipv4'
 
 config rule
-	option name 'Allow-SmartDNS-535'
-	option src 'lan'
-	option proto 'tcp udp'
-	option dest_port '535'
+	option name 'Allow-Established'
+	option proto 'all'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest 'lan'
-	option dest_ip '192.168.3.2'
+	option connstate 'ESTABLISHED,RELATED'
 
 config rule
-	option name 'Allow-SmartDNS-536'
+	option name 'Allow-DHCP'
 	option src 'lan'
-	option proto 'tcp udp'
-	option dest_port '536'
+	option proto 'udp'
+	option src_port '67-68'
+	option dest_port '67-68'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
-	option dest 'lan'
-
-config rule
-	option name 'Allow-SmartDNS-DoT-8753'
-	option src 'lan'
-	option proto 'tcp'
-	option dest_port '8753'
-	option target 'ACCEPT'
-	option family 'ipv4'
-	option dest_ip '192.168.3.2'
-	option dest 'lan'
-
-config rule
-	option name 'Allow-SmartDNS-DoT-8755'
-	option src 'lan'
-	option proto 'tcp'
-	option dest_port '8755'
-	option target 'ACCEPT'
-	option family 'ipv4'
-	option dest_ip '192.168.3.2'
-	option dest 'lan'
-
-config rule
-	option name 'Allow-SmartDNS-DoH-6773'
-	option src 'lan'
-	option proto 'tcp'
-	option dest_port '6773'
-	option target 'ACCEPT'
-	option family 'ipv4'
-	option dest_ip '192.168.3.2'
-	option dest 'lan'
-
-config rule
-	option name 'Allow-SmartDNS-DoH-6775'
-	option src 'lan'
-	option proto 'tcp'
-	option dest_port '6775'
-	option target 'ACCEPT'
-	option family 'ipv4'
-	option dest_ip '192.168.3.2'
-	option dest 'lan'
 
