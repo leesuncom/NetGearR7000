@@ -45,6 +45,8 @@ echo "spki_google: $(echo | openssl s_client -connect 'https://dns.google/dns-qu
 
 # 获取 腾讯 DNSPod 的 SPKI 并追加到文件（不覆盖原有内容）
 echo "spki_DNSPod: $(echo | openssl s_client -connect '120.53.53.53:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
+echo "spki_119.29.29.29: $(echo | openssl s_client -connect '119.29.29.29:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
+
 # 获取 SB公共DNS 的 SPKI 并追加到文件（不覆盖原有内容）
 echo "spki_SB: $(echo | openssl s_client -connect '185.222.222.222:853' 2> /dev/null | openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> common/etc/smartdns/spki
 # 获取 OpenDNS(Cisco) 的 SPKI 并追加到文件（不覆盖原有内容）
