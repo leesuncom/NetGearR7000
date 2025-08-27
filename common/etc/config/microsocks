@@ -1,0 +1,8 @@
+
+config microsocks 'config'
+	option enabled '1'
+	option listenip '192.168.3.2'
+	option port '7898'
+	option quiet '1'
+	option bindaddr '192.168.3.2'
+
