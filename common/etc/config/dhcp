@@ -20,6 +20,7 @@ config dnsmasq
 	list interface 'lan'
 	option port '0'
 	option old_dns_redirect '1'
+	option strictorder '1'
 
 config dhcp 'lan'
 	option interface 'lan'
