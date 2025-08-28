@@ -21,9 +21,9 @@ cat /tmp/proxy-domain-list.conf > common/etc/smartdns/domain-set/proxy-domain-li
 
 # Update address.conf
 curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf > r619ac/etc/smartdns/address.conf
-curl -sS https://www.cloudflare.com/ips-v4/ > r619ac/etc/smartdns/cloudflare-ipv4.txt
+curl -sS https://www.cloudflare.com/ips-v4/ > r619ac/etc/smartdns/ip-set/cloudflare-ipv4.txt
 curl -sS https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf > common/etc/smartdns/address.conf
-curl -sS https://www.cloudflare.com/ips-v4/ > common/etc/smartdns/cloudflare-ipv4.txt
+curl -sS https://www.cloudflare.com/ips-v4/ > common/etc/smartdns/ip-set/cloudflare-ipv4.txt
 
 
 # 引入配置 conf-file /etc/smartdns/anti-ad-smartdns.conf
