@@ -110,6 +110,14 @@ jobs:
         chmod +x $DIY_P0_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P0_SH
+        mkdir -p files/etc/config
+        mkdir -p files/etc/smartdns
+        mkdir -p files/etc/opkg
+        mkdir -p files/etc/crontabs
+        SRC_DIR="../common/etc"
+        cp -rfv $SRC_DIR/* files/etc/ || true
+        chmod 755 files/etc/hosts.sh || true
+        chmod 755 files/etc/updatew.sh || true
         
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
