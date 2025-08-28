@@ -5,4 +5,5 @@ config microsocks 'config'
 	option port '7898'
 	option quiet '1'
 	option bindaddr '192.168.3.2'
+	option internet_access '1'
 
