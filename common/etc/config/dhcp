@@ -10,7 +10,7 @@ config dnsmasq
 	option nonegcache '1'
 	option authoritative '1'
 	option leasefile '/tmp/dhcp.leases'
-	option localservice '0'
+	option localservice '1'
 	option ednspacket_max '1232'
 	option filter_aaaa '1'
 	option sequential_ip '1'
@@ -18,7 +18,6 @@ config dnsmasq
 	option noresolv '1'
 	option ignore_hosts_dir '1'
 	list interface 'lan'
-	option dns_redirect '0'
 	option port '0'
 	option old_dns_redirect '1'
 
