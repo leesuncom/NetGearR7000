@@ -2,7 +2,7 @@
 config defaults
 	option input 'REJECT'
 	option output 'ACCEPT'
-	option forward 'REJECT'
+	option forward 'ACCEPT'
 	option flow_offloading '1'
 	option flow_offloading_hw '1'
 	option fullcone '1'
