@@ -27,12 +27,12 @@ block_ipv6 = true
 block_unqualified = true
 block_undelegated = true
 reject_ttl = 10
-cache = false
-#cache_size = 4096
-#cache_min_ttl = 2400
-#cache_max_ttl = 86400
-#cache_neg_min_ttl = 60
-#cache_neg_max_ttl = 600
+cache = true
+cache_size = 2048
+cache_min_ttl = 2400
+cache_max_ttl = 86400
+cache_neg_min_ttl = 60
+cache_neg_max_ttl = 600
 [captive_portals]
 [local_doh]
 [query_log]
@@ -64,7 +64,7 @@ fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familys
 routes = [
    { server_name = '*', via = ['anon-cs-singapore'] },
 #  { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] },
-   { server_name='dnscry.pt-anon-singapore02-ipv4', via=['sdns://gQ0xMDMuMTc5LjQ0Ljcz'] }
+   { server_name='anon-cs-ch', via=['sdns://gRMxOTAuMjExLjI1NS4yMjc6NDQz'] }
 ]
 skip_incompatible = true
 direct_cert_fallback = false
