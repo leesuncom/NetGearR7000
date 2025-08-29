@@ -12,6 +12,10 @@ if ! uci -q get system.@imm_init[0].system_chn > "/dev/null"; then
 		add_list system.ntp.server="ntp1.aliyun.com"
 		add_list system.ntp.server="ntp.ntsc.ac.cn"
 		add_list system.ntp.server="cn.ntp.org.cn"
+                add_list system.ntp.server="216.239.35.0"
+		add_list system.ntp.server="216.239.35.8"
+		add_list system.ntp.server="162.159.200.1"
+		add_list system.ntp.server="162.159.200.123"
 
 		set system.@imm_init[0].system_chn="1"
 		commit system
