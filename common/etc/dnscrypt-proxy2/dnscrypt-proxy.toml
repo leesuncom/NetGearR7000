@@ -27,12 +27,12 @@ block_ipv6 = true
 block_unqualified = true
 block_undelegated = true
 reject_ttl = 10
-cache = true
-cache_size = 2048
-cache_min_ttl = 2400
-cache_max_ttl = 86400
-cache_neg_min_ttl = 60
-cache_neg_max_ttl = 600
+cache = false
+# cache_size = 2048
+# cache_min_ttl = 2400
+# cache_max_ttl = 86400
+# cache_neg_min_ttl = 60
+# cache_neg_max_ttl = 600
 [captive_portals]
 [local_doh]
 [query_log]
