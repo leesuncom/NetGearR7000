@@ -62,7 +62,7 @@ fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familys
 [doh_client_x509_auth]
 [anonymized_dns]
 routes = [
-   { server_name = '*', via = ['anon-cs-tokyo', 'anon-cs-singapore'] },
+   { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] },
    { server_name='dnscry.pt-anon-yerevan-ipv4', via=['sdns://gQ04NS45MC4yMDcuMTk5'] }
 ]
 skip_incompatible = true
