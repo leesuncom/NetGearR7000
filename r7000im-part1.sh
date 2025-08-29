@@ -17,7 +17,7 @@ rm -rf feeds/smpackage/luci-theme-argon
 rm -rf feeds/smpackage/luci-app-argon-config
 git clone https://github.com/jerrykuku/luci-theme-argon.git feeds/packages/theme/luci-theme-argon
 git clone https://github.com/jerrykuku/luci-app-argon-config.git feeds/luci/applications/luci-app-argon-config
-git clone https://github.com/peter-tank/luci-app-dnscrypt-proxy2.git feeds/luci/applications/luci-app-dnscrypt-proxy2
+git clone https://github.com/peter-tank/luci-app-dnscrypt-proxy2.git package/luci-app-dnscrypt-proxy2
 
 # 移除 openwrt feeds 自带的核心库
 # rm -rf feeds/packages/net/{xray-core,v2ray-geodata,sing-box,chinadns-ng,dns2socks,hysteria,ipt2socks,microsocks,naiveproxy,shadowsocks-libev,shadowsocks-rust,shadowsocksr-libev,simple-obfs,tcping,trojan-plus,tuic-client,v2ray-plugin,xray-plugin,geoview,shadow-tls}
