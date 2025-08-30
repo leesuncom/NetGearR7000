@@ -11,7 +11,7 @@ cp /tmp/blacklist-ip.conf /etc/smartdns/blacklist-ip.conf
 # 更新Cloudflare IPv4列表
 rm -f /tmp/cloudflare-ipv4.txt
 curl -sS https://www.cloudflare.com/ips-v4/ -o /tmp/cloudflare-ipv4.txt
-cp /tmp/cloudflare-ipv4.txt /etc/smartdns/cloudflare-ipv4.txt
+cp /tmp/cloudflare-ipv4.txt /etc/smartdns/ip-set/cloudflare-ipv4.txt
 
 # 更新中国域名列表
 rm -f /tmp/domains.china.smartdns.conf
