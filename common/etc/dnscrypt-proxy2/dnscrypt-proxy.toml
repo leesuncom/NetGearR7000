@@ -1,3 +1,4 @@
+server_names = ['google', 'scaleway-fr', 'yandex', 'cloudflare']
 listen_addresses = ['127.0.0.1:5353']
 max_clients = 250
 ipv4_servers = true
@@ -16,7 +17,7 @@ timeout = 5000
 keepalive = 30
 cert_refresh_delay = 240
 # bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']  # 腾讯/阿里云 DNS（国内稳定，仅用于拉取服务器列表）
-bootstrap_resolvers = ['9.9.9.11:53', '8.8.8.8:53']
+bootstrap_resolvers = ['8.8.8.8:53', '9.9.9.11:53']
 ignore_system_dns = true
 netprobe_timeout = 60
 netprobe_address = '9.9.9.9:53'
@@ -35,6 +36,10 @@ cache = false
 # cache_neg_max_ttl = 600
 [captive_portals]
 [local_doh]
+listen_addresses = ['127.0.0.1:7058']
+path = '/dns-query'
+cert_file = '/var/etc/smartdns/smartdns-cert.pem'
+cert_key_file = '/var/etc/smartdns/smartdns-key.pem'
 [query_log]
 format = 'tsv'
 [nx_log]
@@ -62,9 +67,9 @@ fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familys
 [doh_client_x509_auth]
 [anonymized_dns]
 routes = [
-   { server_name = '*', via = ['anon-cs-singapore'] },
+   { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo', 'anon-cs-de'] },
 #  { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] },
-   { server_name='anon-cs-ch', via=['sdns://gRMxOTAuMjExLjI1NS4yMjc6NDQz'] }
+   { server_name='dnscry.pt-anon-singapore02-ipv4', via=['sdns://gQ0xMDMuMTc5LjQ0Ljcz'] }
 ]
 skip_incompatible = true
 direct_cert_fallback = false
