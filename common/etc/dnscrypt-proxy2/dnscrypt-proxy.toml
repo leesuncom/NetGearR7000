@@ -16,8 +16,8 @@ http3 = false
 timeout = 5000
 keepalive = 30
 cert_refresh_delay = 240
-# bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']  # 腾讯/阿里云 DNS（国内稳定，仅用于拉取服务器列表）
-bootstrap_resolvers = ['8.8.8.8:53', '9.9.9.11:53']
+bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']  # 腾讯/阿里云 DNS（国内稳定，仅用于拉取服务器列表）
+# bootstrap_resolvers = ['8.8.8.8:53', '9.9.9.11:53']
 ignore_system_dns = true
 netprobe_timeout = 60
 netprobe_address = '9.9.9.9:53'
@@ -51,13 +51,13 @@ format = 'tsv'
 [schedules]
 [sources]
   [sources.public-resolvers]
-    urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md', 'https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md']
+    urls = ['https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md', 'https://ghfast.top/https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md']
     cache_file = 'public-resolvers.md'
     minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
     refresh_delay = 72
     prefix = ''
   [sources.relays]
-    urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md', 'https://download.dnscrypt.info/resolvers-list/v3/relays.md']
+    urls = ['https://download.dnscrypt.info/resolvers-list/v3/relays.md', 'https://ghfast.top/https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/relays.md']
     cache_file = 'relays.md'
     minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
     refresh_delay = 72
