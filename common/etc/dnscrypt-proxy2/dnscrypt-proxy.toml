@@ -1,4 +1,4 @@
-server_names = ['google', 'scaleway-fr', 'yandex', 'cloudflare']
+server_names = ['google', 'yandex', 'quad9-dnscrypt-ip4-nofilter-ecs-pri', 'quad9-doh-ip4-port443-nofilter-pri']
 listen_addresses = ['127.0.0.1:5353']
 max_clients = 250
 ipv4_servers = true
