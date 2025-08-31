@@ -34,21 +34,5 @@ fi
 sed -i.bak "s,https://downloads.immortalwrt.org,$opkg_mirror,g" "/etc/opkg/distfeeds.conf"
 sed -i -e 's/ImmortalWrt/Openwrt/' -e 's/LuCI [^ ]*/LeeSun/g' -e '/luciversion/d' /usr/lib/lua/luci/version.lua
 echo "luciversion ='$(date +'%m.%d')'" >> /usr/lib/lua/luci/version.lua
-# 设置配置文件的部署标记（所有文件在构建时已直接部署）
-uci -q batch <<-EOF
-    set system.@imm_init[0].smartdns_conf="1"
-    set system.@imm_init[0].smartdns_cloudflare="1"
-    set system.@imm_init[0].smartdns_domainset="1"
-    set system.@imm_init[0].microsocks_conf="1"
-    set system.@imm_init[0].config_dhcp="1"
-    set system.@imm_init[0].config_firewall="1"
-    set system.@imm_init[0].config_luci="1"
-    set system.@imm_init[0].config_network="1"
-    set system.@imm_init[0].config_mosdns="1"
-    set system.@imm_init[0].config_system="1"
-    set system.@imm_init[0].config_smartdns="1"
-    set system.@imm_init[0].config_upnpd="1"
-    commit system
-EOF
 
 exit 0
