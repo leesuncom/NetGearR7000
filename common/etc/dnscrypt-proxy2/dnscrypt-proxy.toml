@@ -1,5 +1,5 @@
 # 服务器选择 - 简化列表，只保留最可靠的服务器
-server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
+# server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
 
 # 监听地址
 listen_addresses = ['127.0.0.1:5353']
@@ -21,9 +21,9 @@ require_nofilter = true
 disabled_server_names = []
 
 # 代理设置 - 确保代理服务正常运行
-proxy = 'socks5://127.0.0.1:7898'
-force_tcp = true
-http3 = false
+# proxy = 'socks5://127.0.0.1:7898'
+force_tcp = false
+# http3 = false
 
 # 超时和连接设置
 timeout = 10000
