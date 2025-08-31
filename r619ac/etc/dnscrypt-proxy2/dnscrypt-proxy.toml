@@ -1,58 +1,91 @@
-server_names = ['google', 'yandex', 'quad9-dnscrypt-ip4-nofilter-ecs-pri', 'quad9-doh-ip4-port443-nofilter-pri']
+# 服务器选择 - 简化列表，只保留最可靠的服务器
+server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
+
+# 监听地址
 listen_addresses = ['127.0.0.1:5353']
 max_clients = 250
+
+# IP 版本设置
 ipv4_servers = true
 ipv6_servers = false
+
+# 协议支持
 dnscrypt_servers = true
 doh_servers = true
 odoh_servers = false
+
+# 服务器要求
 require_dnssec = false
 require_nolog = true
 require_nofilter = true
 disabled_server_names = []
-proxy = 'socks5://127.0.0.1:7898'  # 需与 SmartDNS 的 proxy-server 地址完全匹配
-force_tcp = true  # 【必改】配合 socks5 代理：强制用 TCP 传输（代理通常不支持 UDP）
+
+# 代理设置 - 确保代理服务正常运行
+proxy = 'socks5://127.0.0.1:7898'
+force_tcp = true
 http3 = false
+
+# 超时和连接设置
 timeout = 10000
 keepalive = 30
 cert_refresh_delay = 240
-bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']  # 腾讯/阿里云 DNS（国内稳定，仅用于拉取服务器列表）
-# bootstrap_resolvers = ['8.8.8.8:53', '9.9.9.11:53']
+
+# 引导解析器 - 使用国内稳定的 DNS
+bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
 ignore_system_dns = true
+
+# 网络探测
 netprobe_timeout = 60
 netprobe_address = '119.29.29.29:53'
+
+# 日志设置
 log_files_max_size = 10
 log_files_max_age = 7
 log_files_max_backups = 1
+
+# 过滤设置
 block_ipv6 = true
 block_unqualified = true
 block_undelegated = true
 reject_ttl = 10
+
+# 缓存设置
 cache = true
 cache_size = 512
 cache_min_ttl = 300
 cache_max_ttl = 3600
 cache_neg_min_ttl = 60
 cache_neg_max_ttl = 600
-[captive_portals]
+
+# 本地 DoH 服务 - 确保证书路径正确
 [local_doh]
 listen_addresses = ['127.0.0.1:7058']
 path = '/dns-query'
-cert_file = '/var/etc/smartdns/smartdns-cert.pem'
-cert_key_file = '/var/etc/smartdns/smartdns-key.pem'
+cert_file = '/var/etc/smartdns/smartdns-cert.pem' 
+cert_key_file = '/var/etc/smartdns/smartdns-key.pem' 
+# 将您的自签名证书追加到系统 CA 捆绑包末尾
+# cat /var/etc/smartdns/smartdns-cert.pem >> /etc/ssl/certs/ca-certificates.crt,ln -sf /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
+# openssl s_client -connect 127.0.0.1:7058 -servername smartdns -CAfile /etc/ssl/certs/ca-certificates.crt，/etc/init.d/dnscrypt-proxy restart
+
+# 日志设置
 [query_log]
 format = 'tsv'
 file = '/dev/null'
-# log_files_max_size = 1
-# log_files_max_age = 1 
+
 [nx_log]
 format = 'tsv'
 file = '/dev/null'
+
+# 列表设置
 [blocked_names]
 [blocked_ips]
 [allowed_names]
 [allowed_ips]
+
+# 计划任务
 [schedules]
+
+# 源设置
 [sources]
   [sources.public-resolvers]
     urls = ['https://download.dnscrypt.info/resolvers-list/v3/public-resolvers.md', 'https://ghfast.top/https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/public-resolvers.md']
@@ -66,16 +99,24 @@ file = '/dev/null'
     minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
     refresh_delay = 72
     prefix = ''
+
+# 兼容性设置
 [broken_implementations]
 fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familyshield-ipv6', 'cleanbrowsing-adult', 'cleanbrowsing-adult-ipv6', 'cleanbrowsing-family', 'cleanbrowsing-family-ipv6', 'cleanbrowsing-security', 'cleanbrowsing-security-ipv6']
+
+# 客户端证书认证
 [doh_client_x509_auth]
+
+# 匿名 DNS - 简化路由设置
 [anonymized_dns]
 routes = [
-   { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo', 'anon-cs-de'] },
-#  { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] },
-   { server_name='dnscry.pt-anon-singapore02-ipv4', via=['sdns://gQ0xMDMuMTc5LjQ0Ljcz'] }
+   { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] }
 ]
 skip_incompatible = true
 direct_cert_fallback = false
+
+# DNS64
 [dns64]
+
+# 静态配置
 [static]
