@@ -101,3 +101,35 @@ config rule
 	option target 'ACCEPT'
 	option family 'ipv4'
 
+config redirect
+	option name 'Divert-DNS, port 5353'
+	option src 'lan'
+	option dest 'lan'
+	option src_dport '5353'
+	option dest_port '53'
+	option target 'DNAT'
+
+config redirect
+	option name 'Divert-DNS, port 7058'
+	option src 'lan'
+	option dest 'lan'
+	option src_dport '7058'
+	option dest_port '53'
+	option target 'DNAT'
+
+config rule
+	option name 'Reject-DoT, port 853'
+	option src 'lan'
+	option dest 'lan'
+	option dest_port '853'
+	option proto 'tcp'
+	option target 'REJECT'
+
+config redirect
+	option name 'Divert-DNS, port 53'
+	option src 'lan'
+	option dest 'lan'
+	option src_dport '53'
+	option dest_port '53'
+	option target 'DNAT'
+
