@@ -1,9 +1,0 @@
-
-config microsocks 'config'
-	option enabled '1'
-	option listenip '127.0.0.1'
-	option port '7898'
-	option quiet '1'
-	option bindaddr '0.0.0.0'
-	option internet_access '1'
-
