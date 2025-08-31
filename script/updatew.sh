@@ -70,14 +70,6 @@ sed "s/^full://g;s/^regexp:.*$//g;s/^/nameserver \//g;s/$/\/china/g" -i /tmp/dom
 cat /tmp/domains.china.smartdns.conf > r619ac/etc/smartdns/domain-set/domains.china.smartdns.conf
 cat /tmp/domains.china.smartdns.conf > common/etc/smartdns/domain-set/domains.china.smartdns.conf
 
-# 删除
-sudo sed -i '/# ING Hosts Start/,/# ING Hosts End/d' r619ac/etc/hosts
-# 添加
-curl -s -k -L https://ghfast.top/https://raw.githubusercontent.com/shidahuilang/hosts/main/hosts | sudo tee -a r619ac/etc/hosts
-# 删除
-sudo sed -i '/# ING Hosts Start/,/# ING Hosts End/d' common/etc/hosts
-# 添加
-curl -s -k -L https://ghfast.top/https://raw.githubusercontent.com/shidahuilang/hosts/main/hosts | sudo tee -a common/etc/hosts
 
 
 
