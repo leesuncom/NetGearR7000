@@ -114,7 +114,7 @@ jobs:
         mkdir -p files/etc/smartdns
         mkdir -p files/etc/opkg
         mkdir -p files/etc/crontabs
-        SRC_DIR="../common/etc"
+        SRC_DIR="../r619ac/etc"
         cp -rfv $SRC_DIR/* files/etc/ || true
         chmod 755 files/etc/hosts.sh || true
         chmod 755 files/etc/updatew.sh || true
