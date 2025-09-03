@@ -22,11 +22,11 @@ config dnsmasq
 	option dnsforwardmax '8192'
 	option quietdhcp '1'
 	option localuse '1'
-	option cachesize '0'
 	option readethers '1'
 	option nohosts '1'
 	option boguspriv '0'
 	list server '127.0.0.1#7755'
+	option cachesize '0'
 
 config dhcp 'lan'
 	option interface 'lan'

@@ -61,13 +61,10 @@ cache = false
 [local_doh]
 listen_addresses = ['127.0.0.1:7058']
 path = '/dns-query'
-cert_file = '/etc/nginx/conf.d/_lan.crt' 
-cert_key_file = '/etc/nginx/conf.d/_lan.key' 
-
-#cert_file = '/var/etc/smartdns/smartdns-cert.pem' 
-#cert_key_file = '/var/etc/smartdns/smartdns-key.pem' 
+cert_file = '/etc/dnscrypt-proxy2/mosdns-cert.pem' 
+cert_key_file = '/etc/dnscrypt-proxy2/mosdns-key.pem' 
 # 将您的自签名证书追加到系统 CA 捆绑包末尾
-# cat /var/etc/smartdns/smartdns-cert.pem >> /etc/ssl/certs/ca-certificates.crt,ln -sf /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
+# cat /etc/dnscrypt-proxy2/smartdns-cert.pem >> /etc/ssl/certs/ca-certificates.crt,ln -sf /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
 # openssl s_client -connect 127.0.0.1:7058 -servername smartdns -CAfile /etc/ssl/certs/ca-certificates.crt，/etc/init.d/dnscrypt-proxy restart
 
 # 日志设置
