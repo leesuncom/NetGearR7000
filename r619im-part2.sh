@@ -22,7 +22,7 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # Modify hostname
 sed -i 's/ImmortalWrt/R619AC/g' package/base-files/files/bin/config_generate
 
-sed -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
+sed -i -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
 
 rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
 wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
