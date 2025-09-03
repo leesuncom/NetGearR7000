@@ -26,7 +26,7 @@ start() {
         # 创建符号链接（覆盖现有）
         ln -sf /etc/ssl/certs/ca-certificates.crt /etc/ssl/cert.pem
         # 重启dnscrypt-proxy服务（此时dnscrypt-proxy尚未启动，实际会触发启动）
-        /etc/init.d/dnscrypt-proxy restart
+#        /etc/init.d/dnscrypt-proxy restart
     else
         echo "mosdns keyword found in cert file, skipping setup."
     fi
