@@ -1,5 +1,5 @@
 
-config main global
+config main 'global'
 	option uci_enable 'true'
 
 config server '_lan'
@@ -20,3 +20,17 @@ config server '_redirect2ssl'
 	list listen '[::]:80'
 	option server_name '_redirect2ssl'
 	option return '302 https://$host$request_uri'
+
+config server '_sc_pw'
+	option server_name 'pw'
+	list listen '80'
+	list listen '443'
+	option return '302 http://10.0.0.1/cgi-bin/luci/admin/services/passwall'
+
+config server 'default_server'
+	option server_name 'kwrt'
+	list listen '80 default_server'
+	list listen '[::]:80 default_server'
+	list include 'conf.d/*.locations'
+	option access_log 'off; # logd openwrt'
+
