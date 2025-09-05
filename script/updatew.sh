@@ -151,66 +151,7 @@ curl -sS --connect-timeout 5 https://anti-ad.net/anti-ad-for-smartdns.conf 2>/de
 
 echo "[√] 广告过滤与Cloudflare IP列表更新完成"
 
-<<<<<<< HEAD
-=======
 
-# -------------------------- 3. 生成 SmartDNS SPKI 证书配置（添加容错） --------------------------
-echo "[模块3/6] 生成 SmartDNS SPKI 证书配置..."
-# 定义SPKI生成函数（添加错误捕获，避免单个DNS失败导致整体崩溃）
-generate_spki() {
-  local output_path=$1
-  # 清空旧文件（避免累积无效内容）
-  > "$output_path"
-  
-  # 1. Cloudflare DNS (1.0.0.1:853) - 容错：捕获失败时跳过
-  spki_cloudflare=$(echo | openssl s_client -connect '1.0.0.1:853' -servername cloudflare-dns.com 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_cloudflare" ] && echo "spki_cloudflare: $spki_cloudflare" >> "$output_path"
-
-  # 2. Google DNS (8.8.8.8:853 + DoH)
-  spki_google_853=$(echo | openssl s_client -connect '8.8.8.8:853' -servername dns.google 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_google_853" ] && echo "spki_google_853: $spki_google_853" >> "$output_path"
-  
-  spki_google_doh=$(echo | openssl s_client -connect 'dns.google:443' -servername dns.google 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_google_doh" ] && echo "spki_google_doh: $spki_google_doh" >> "$output_path"
-
-  # 3. 腾讯DNSPod (120.53.53.53:853)
-  spki_dnspod=$(echo | openssl s_client -connect '120.53.53.53:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_dnspod" ] && echo "spki_dnspod: $spki_dnspod" >> "$output_path"
-
-  # 4. 腾讯云DNS (119.29.29.29:853)
-  spki_tencent_119=$(echo | openssl s_client -connect '119.29.29.29:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_tencent_119" ] && echo "spki_tencent_119: $spki_tencent_119" >> "$output_path"
-
-  # 5. SB公共DNS (185.222.222.222:853)
-  spki_sb_public=$(echo | openssl s_client -connect '185.222.222.222:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_sb_public" ] && echo "spki_sb_public: $spki_sb_public" >> "$output_path"
-
-  # 6. OpenDNS(Cisco) (208.67.222.222:853)
-  spki_opendns_cisco=$(echo | openssl s_client -connect '208.67.222.222:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
-    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
-  [ -n "$spki_opendns_cisco" ] && echo "spki_opendns_cisco: $spki_opendns_cisco" >> "$output_path"
-}
-
-# 生成并同步到双目录
-generate_spki "${TARGET_DIR1}/smartdns/spki"
-generate_spki "${TARGET_DIR2}/smartdns/spki"
-echo "[√] SPKI证书配置生成完成（跳过不可达DNS）"
-
-
->>>>>>> fa573ad6b73e337e8a28e88fca4b52f12ff9f19d
 # -------------------------- 4. 更新 SmartDNS 中国IP黑名单与域名列表 --------------------------
 echo "[模块4/6] 更新 SmartDNS 中国IP黑名单与域名列表..."
 # 4.1 中国IP黑名单（多源合并）
