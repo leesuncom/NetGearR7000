@@ -1,6 +1,3 @@
-0 */3 * * * /etc/hosts.sh
-0 1 * * * /etc/updatew.sh
+0 1 * * * /etc/updatew.sh  > /tmp/update-log.txt 2>&1
 3 3 12 12 * /usr/bin/nginx-util 'check_ssl'
 0 2 * * * /usr/share/mosdns/mosdns.sh geodata
-0 3 * * * /etc/mosdns/script/update.sh
-0 4 * * * /etc/mosdns/script/flush_cache.sh
