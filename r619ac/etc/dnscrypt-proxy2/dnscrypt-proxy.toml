@@ -2,7 +2,7 @@
 # server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
 
 # 监听地址
-listen_addresses = ['127.0.0.1:5353']
+listen_addresses = ['0.0.0.0:5353']
 max_clients = 250
 
 # IP 版本设置
@@ -21,9 +21,9 @@ require_nofilter = true
 disabled_server_names = []
 
 # 代理设置 - 确保代理服务正常运行，mosdns在启用代理这里就不要启用了。
-# proxy = 'socks5://127.0.0.1:7898'
-force_tcp = false
-# http3 = false
+proxy = 'socks5://127.0.0.1:7898'
+force_tcp = true
+http3 = false
 
 # 超时和连接设置
 timeout = 10000
@@ -31,12 +31,14 @@ keepalive = 30
 cert_refresh_delay = 240
 
 # 引导解析器 - 使用国内稳定的 DNS
-bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
+# bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
+bootstrap_resolvers = ['9.9.9.11:53', '8.8.8.8:53']
 ignore_system_dns = true
 
 # 网络探测
 netprobe_timeout = 60
-netprobe_address = '119.29.29.29:53'
+netprobe_address = '9.9.9.9:53'
+# netprobe_address = '119.29.29.29:53'
 
 # 日志设置
 log_files_max_size = 10
@@ -141,6 +143,10 @@ cert_key_file = '/etc/dnscrypt-proxy2/mosdns-key.pem'
     minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
     refresh_delay = 72
     prefix = ''
+  [sources.parental-control]
+    urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/parental-control.md', 'https://download.dnscrypt.info/resolvers-list/v3/parental-control.md', 'https://ipv6.download.dnscrypt.info/resolvers-list/v3/parental-control.md']
+    cache_file = 'parental-control.md'
+    minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
 
 # 兼容性设置
 [broken_implementations]
@@ -148,9 +154,9 @@ fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familys
 
 # 客户端证书认证
 [doh_client_x509_auth]
-# creds = [
-#    { server_name='*', client_cert='mosdns-cert.pem', client_key='mosdns-key.pem' }
-# ]
+creds = [
+   { server_name='*', client_cert='mosdns-cert.pem', client_key='mosdns-key.pem' }
+]
 
 # 匿名 DNS - 简化路由设置
 [anonymized_dns]
