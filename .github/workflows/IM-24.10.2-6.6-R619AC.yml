@@ -116,7 +116,6 @@ jobs:
         mkdir -p files/etc/crontabs
         SRC_DIR="../r619ac/etc"
         cp -rfv $SRC_DIR/* files/etc/ || true
-        chmod 755 files/etc/hosts.sh || true
         chmod 755 files/etc/updatew.sh || true
         chmod 755 files/etc/mosdns/script/flush_cache.sh
         chmod 755 files/etc/mosdns/script/update.sh
