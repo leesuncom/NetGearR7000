@@ -12,11 +12,12 @@
 # https://apad.pro/easymosdns
 #
 
-# -------------------------- 0. 初始化：清理临时文件（目录已存在） --------------------------
-echo "[初始化] 清理临时文件（目录已存在）..."
-# 临时文件目录（已存在，仅清理旧文件）
+# -------------------------- 0. 初始化：创建并清理临时文件（关键修复） --------------------------
+echo "[初始化] 创建并清理临时文件..."
+# 临时文件目录（强制创建，解决/tmp目录重启后丢失问题）
 TMP_DIR="/tmp/dns-config-tmp"
-rm -rf "$TMP_DIR"/*  # 清空临时目录旧文件，避免干扰新生成内容
+mkdir -p "$TMP_DIR"  # 核心修复：确保临时目录存在
+rm -rf "$TMP_DIR"/*  # 清空目录内旧文件，避免干扰
 
 # 目标配置目录（双目录已存在，直接使用）
 TARGET_DIR1="r619ac/etc"
@@ -32,63 +33,63 @@ mosdns_working_dir="r619ac/etc/mosdns"
 mkdir -p /tmp/easymosdns && rm -rf /tmp/easymosdns/*
 
 # 下载akamai相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" > "/tmp/easymosdns/akamai_domain_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" > "/tmp/easymosdns/akamai_domain_list.txt" 2>/dev/null
 # 下载基础拦截规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" > "/tmp/easymosdns/block_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" > "/tmp/easymosdns/block_list.txt" 2>/dev/null
 # 下载CDN相关IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" > "/tmp/easymosdns/cachefly_ipv4.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" > "/tmp/easymosdns/cdn77_ipv4.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" > "/tmp/easymosdns/cdn77_ipv6.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" > "/tmp/easymosdns/cachefly_ipv4.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" > "/tmp/easymosdns/cdn77_ipv4.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" > "/tmp/easymosdns/cdn77_ipv6.txt" 2>/dev/null
 # 下载国内域名规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/china_domain_list_mini.txt" > "/tmp/easymosdns/china_domain_list_mini.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/china_domain_list_mini.txt" > "/tmp/easymosdns/china_domain_list_mini.txt" 2>/dev/null
 # 下载Cloudflare相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront.txt" > "/tmp/easymosdns/cloudfront.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront_ipv6.txt" > "/tmp/easymosdns/cloudfront_ipv6.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront.txt" > "/tmp/easymosdns/cloudfront.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront_ipv6.txt" > "/tmp/easymosdns/cloudfront_ipv6.txt" 2>/dev/null
 # 下载自定义规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" > "/tmp/easymosdns/custom_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" > "/tmp/easymosdns/custom_list.txt" 2>/dev/null
 # 下载GFW相关IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" > "/tmp/easymosdns/gfw_ip_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" > "/tmp/easymosdns/gfw_ip_list.txt" 2>/dev/null
 # 下载灰色地带规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" > "/tmp/easymosdns/grey_list_js.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" > "/tmp/easymosdns/grey_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" > "/tmp/easymosdns/grey_list_js.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" > "/tmp/easymosdns/grey_list.txt" 2>/dev/null
 # 下载CDN hosts规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" > "/tmp/easymosdns/hosts_akamai.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" > "/tmp/easymosdns/hosts_fastly.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" > "/tmp/easymosdns/hosts_akamai.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" > "/tmp/easymosdns/hosts_fastly.txt" 2>/dev/null
 # 下载DNS列表规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" > "/tmp/easymosdns/jp_dns_list.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" > "/tmp/easymosdns/us_dns_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" > "/tmp/easymosdns/jp_dns_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" > "/tmp/easymosdns/us_dns_list.txt" 2>/dev/null
 # 下载原始域名规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt" > "/tmp/easymosdns/original_domain_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt" > "/tmp/easymosdns/original_domain_list.txt" 2>/dev/null
 # 下载IPv6相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt" > "/tmp/easymosdns/ipv6_domain_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt" > "/tmp/easymosdns/ipv6_domain_list.txt" 2>/dev/null
 # 下载私有IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt" > "/tmp/easymosdns/private.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt" > "/tmp/easymosdns/private.txt" 2>/dev/null
 # 下载重定向规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" > "/tmp/easymosdns/redirect.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" > "/tmp/easymosdns/redirect.txt" 2>/dev/null
 # 下载Sucuri IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" > "/tmp/easymosdns/sucuri_ipv4.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" > "/tmp/easymosdns/sucuri_ipv4.txt" 2>/dev/null
 # 下载白名单规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" > "/tmp/easymosdns/white_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" > "/tmp/easymosdns/white_list.txt" 2>/dev/null
 # 下载社交媒体IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" > "/tmp/easymosdns/facebook.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt" > "/tmp/easymosdns/telegram.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt" > "/tmp/easymosdns/twitter.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" > "/tmp/easymosdns/facebook.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt" > "/tmp/easymosdns/telegram.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt" > "/tmp/easymosdns/twitter.txt" 2>/dev/null
 # 下载CDN IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt" > "/tmp/easymosdns/fastly.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt" > "/tmp/easymosdns/fastly.txt" 2>/dev/null
 # 下载GFW和防火长城规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt" > "/tmp/easymosdns/gfw.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt" > "/tmp/easymosdns/greatfire.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt" > "/tmp/easymosdns/gfw.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt" > "/tmp/easymosdns/greatfire.txt" 2>/dev/null
 # 下载easymosdns专用规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt" > "/tmp/easymosdns/ad_domain_list.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt" > "/tmp/easymosdns/cdn_domain_list.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt" > "/tmp/easymosdns/china_domain_list.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt" > "/tmp/easymosdns/china_ip_list.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt" > "/tmp/easymosdns/ad_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt" > "/tmp/easymosdns/cdn_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt" > "/tmp/easymosdns/china_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt" > "/tmp/easymosdns/china_ip_list.txt" 2>/dev/null
 # 下载Cloudflare IP列表
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" > "/tmp/easymosdns/ip.txt"
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" > "/tmp/easymosdns/ipv6.txt"
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" > "/tmp/easymosdns/ip.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" > "/tmp/easymosdns/ipv6.txt" 2>/dev/null
 
-# 复制规则文件到工作目录
-cp -rf /tmp/easymosdns/*.txt "${mosdns_working_dir}/rule/"
+# 复制规则文件到工作目录（忽略空文件）
+find /tmp/easymosdns -type f -size +0 -exec cp {} "${mosdns_working_dir}/rule/" \;
 
 # 清理临时文件
 rm -rf /tmp/easymosdns/*
@@ -97,157 +98,159 @@ echo "[√] mosdns规则列表更新完成"
 
 # -------------------------- 1. 生成 SmartDNS GFW 代理域名列表 --------------------------
 echo "[模块1/6] 生成 SmartDNS GFW 代理域名列表..."
-# 源1：gfwlist官方列表（Base64解码）
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt | \
-  base64 -d | sort -u | \
+# 源1：gfwlist官方列表（Base64解码，添加错误捕获）
+curl -sS --connect-timeout 5 https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt 2>/dev/null | \
+  base64 -d 2>/dev/null | sort -u | \
   sed -e '/^$\|@@/d' -e 's#!.\+##; s#|##g; s#@##g; s#http://##; s#https://##;' | \
   sed -e '/apple\.com/d; /sina\.cn/d; /sina\.com\.cn/d; /baidu\.com/d; /qq\.com/d' | \
   sed -e '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/d' -e '/^[0-9a-zA-Z\.-]\+$/!d' | \
-  sed -e '/\./!d' -e 's#^\.\+##' > "${TMP_DIR}/temp_gfwlist1"
+  sed -e '/\./!d' -e 's#^\.\+##' > "${TMP_DIR}/temp_gfwlist1" 2>/dev/null
 
 # 源2：fancyss GFW规则
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.conf | \
-  sed -e 's/ipset=\/\.//g; s/\/gfwlist//g; /^server/d' > "${TMP_DIR}/temp_gfwlist2"
+curl -sS --connect-timeout 5 https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.conf 2>/dev/null | \
+  sed -e 's/ipset=\/\.//g; s/\/gfwlist//g; /^server/d' > "${TMP_DIR}/temp_gfwlist2" 2>/dev/null
 
 # 源3：Loyalsoldier GFW规则
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt > "${TMP_DIR}/temp_gfwlist3"
+curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt 2>/dev/null > "${TMP_DIR}/temp_gfwlist3" 2>/dev/null
 
-# 合并所有源 + 补充自定义规则（若有 script/extra.conf，需确保路径存在）
-if [ -f "script/extra.conf" ]; then
-  cat "${TMP_DIR}/temp_gfwlist"{1,2,3} "script/extra.conf" | sort -u | sed -e 's/^\.*//g; /^$/d' > "${TMP_DIR}/proxy-domain-list.conf"
+# 合并所有源 + 补充自定义规则（容错：忽略不存在的文件）
+cat $(find "${TMP_DIR}" -name "temp_gfwlist*" -type f -size +0) 2>/dev/null | \
+  (if [ -f "script/extra.conf" ]; then cat "script/extra.conf"; fi) 2>/dev/null | \
+  sort -u | sed -e 's/^\.*//g; /^$/d' > "${TMP_DIR}/proxy-domain-list.conf" 2>/dev/null
+
+# 转换为 SmartDNS 格式（仅当文件存在时处理）
+if [ -f "${TMP_DIR}/proxy-domain-list.conf" ] && [ -s "${TMP_DIR}/proxy-domain-list.conf" ]; then
+  sed -i \
+    -e "s/^full://g" \
+    -e "s/^regexp:.*$//g" \
+    -e "s/^/nameserver \//g" \
+    -e "s/$/\/oversea/g" \
+    "${TMP_DIR}/proxy-domain-list.conf"
+  # 同步到双目标目录
+  cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR1}/smartdns/domain-set/" 2>/dev/null
+  cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR2}/smartdns/domain-set/" 2>/dev/null
+  echo "[√] GFW代理域名列表生成完成"
 else
-  cat "${TMP_DIR}/temp_gfwlist"{1,2,3} | sort -u | sed -e 's/^\.*//g; /^$/d' > "${TMP_DIR}/proxy-domain-list.conf"
+  echo "[!] GFW代理域名列表生成失败（无有效规则源）"
 fi
-
-# 转换为 SmartDNS 格式（nameserver /域名/oversea）
-sed -i \
-  -e "s/^full://g" \
-  -e "s/^regexp:.*$//g" \
-  -e "s/^/nameserver \//g" \
-  -e "s/$/\/oversea/g" \
-  "${TMP_DIR}/proxy-domain-list.conf"
-
-# 同步到双目标目录
-cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR1}/smartdns/domain-set/"
-cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR2}/smartdns/domain-set/"
-echo "[√] GFW代理域名列表生成完成"
 
 
 # -------------------------- 2. 更新 SmartDNS 广告过滤与 Cloudflare IP 列表 --------------------------
 echo "[模块2/6] 更新 SmartDNS 广告过滤与 Cloudflare IP 列表..."
 # 2.1 广告过滤规则（Cats-Team 源）
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf \
-  > "${TARGET_DIR1}/smartdns/address.conf"
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf \
-  > "${TARGET_DIR2}/smartdns/address.conf"
+curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf 2>/dev/null | \
+  tee "${TARGET_DIR1}/smartdns/address.conf" "${TARGET_DIR2}/smartdns/address.conf" >/dev/null 2>/dev/null
 
 # 2.2 Cloudflare IPv4 列表（官方源）
-curl -sS --connect-timeout 5 https://www.cloudflare.com/ips-v4/ \
-  > "${TARGET_DIR1}/smartdns/ip-set/cloudflare-ipv4.txt"
-curl -sS --connect-timeout 5 https://www.cloudflare.com/ips-v4/ \
-  > "${TARGET_DIR2}/smartdns/ip-set/cloudflare-ipv4.txt"
+curl -sS --connect-timeout 5 https://www.cloudflare.com/ips-v4/ 2>/dev/null | \
+  tee "${TARGET_DIR1}/smartdns/ip-set/cloudflare-ipv4.txt" "${TARGET_DIR2}/smartdns/ip-set/cloudflare-ipv4.txt" >/dev/null 2>/dev/null
 
 # 2.3 反广告补充规则（anti-ad 源）
-curl -sS --connect-timeout 5 https://anti-ad.net/anti-ad-for-smartdns.conf \
-  > "${TARGET_DIR1}/smartdns/conf.d/anti-ad-smartdns.conf"
-curl -sS --connect-timeout 5 https://anti-ad.net/anti-ad-for-smartdns.conf \
-  > "${TARGET_DIR2}/smartdns/conf.d/anti-ad-smartdns.conf"
+curl -sS --connect-timeout 5 https://anti-ad.net/anti-ad-for-smartdns.conf 2>/dev/null | \
+  tee "${TARGET_DIR1}/smartdns/conf.d/anti-ad-smartdns.conf" "${TARGET_DIR2}/smartdns/conf.d/anti-ad-smartdns.conf" >/dev/null 2>/dev/null
+
 echo "[√] 广告过滤与Cloudflare IP列表更新完成"
 
 
-# -------------------------- 3. 生成 SmartDNS SPKI 证书配置 --------------------------
+# -------------------------- 3. 生成 SmartDNS SPKI 证书配置（添加容错） --------------------------
 echo "[模块3/6] 生成 SmartDNS SPKI 证书配置..."
-# 定义SPKI生成函数
+# 定义SPKI生成函数（添加错误捕获，避免单个DNS失败导致整体崩溃）
 generate_spki() {
   local output_path=$1
-  # 1. Cloudflare DNS (1.0.0.1:853)
-  echo "spki_cloudflare: $(echo | openssl s_client -connect '1.0.0.1:853' -servername cloudflare-dns.com 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" > "$output_path"
+  # 清空旧文件（避免累积无效内容）
+  > "$output_path"
   
+  # 1. Cloudflare DNS (1.0.0.1:853) - 容错：捕获失败时跳过
+  spki_cloudflare=$(echo | openssl s_client -connect '1.0.0.1:853' -servername cloudflare-dns.com 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_cloudflare" ] && echo "spki_cloudflare: $spki_cloudflare" >> "$output_path"
+
   # 2. Google DNS (8.8.8.8:853 + DoH)
-  echo "spki_google_853: $(echo | openssl s_client -connect '8.8.8.8:853' -servername dns.google 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
-  echo "spki_google_doh: $(echo | openssl s_client -connect 'dns.google:443' -servername dns.google 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
+  spki_google_853=$(echo | openssl s_client -connect '8.8.8.8:853' -servername dns.google 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_google_853" ] && echo "spki_google_853: $spki_google_853" >> "$output_path"
   
+  spki_google_doh=$(echo | openssl s_client -connect 'dns.google:443' -servername dns.google 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_google_doh" ] && echo "spki_google_doh: $spki_google_doh" >> "$output_path"
+
   # 3. 腾讯DNSPod (120.53.53.53:853)
-  echo "spki_dnspod: $(echo | openssl s_client -connect '120.53.53.53:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
-  
+  spki_dnspod=$(echo | openssl s_client -connect '120.53.53.53:853' 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_dnspod" ] && echo "spki_dnspod: $spki_dnspod" >> "$output_path"
+
   # 4. 腾讯云DNS (119.29.29.29:853)
-  echo "spki_tencent_119: $(echo | openssl s_client -connect '119.29.29.29:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
-  
+  spki_tencent_119=$(echo | openssl s_client -connect '119.29.29.29:853' 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_tencent_119" ] && echo "spki_tencent_119: $spki_tencent_119" >> "$output_path"
+
   # 5. SB公共DNS (185.222.222.222:853)
-  echo "spki_sb_public: $(echo | openssl s_client -connect '185.222.222.222:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
-  
+  spki_sb_public=$(echo | openssl s_client -connect '185.222.222.222:853' 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_sb_public" ] && echo "spki_sb_public: $spki_sb_public" >> "$output_path"
+
   # 6. OpenDNS(Cisco) (208.67.222.222:853)
-  echo "spki_opendns_cisco: $(echo | openssl s_client -connect '208.67.222.222:853' 2>/dev/null | \
-    openssl x509 -pubkey -noout | openssl pkey -pubin -outform der | openssl dgst -sha256 -binary | openssl enc -base64)" >> "$output_path"
+  spki_opendns_cisco=$(echo | openssl s_client -connect '208.67.222.222:853' 2>/dev/null | \
+    openssl x509 -pubkey -noout 2>/dev/null | openssl pkey -pubin -outform der 2>/dev/null | \
+    openssl dgst -sha256 -binary 2>/dev/null | openssl enc -base64 2>/dev/null)
+  [ -n "$spki_opendns_cisco" ] && echo "spki_opendns_cisco: $spki_opendns_cisco" >> "$output_path"
 }
 
 # 生成并同步到双目录
 generate_spki "${TARGET_DIR1}/smartdns/spki"
 generate_spki "${TARGET_DIR2}/smartdns/spki"
-echo "[√] SPKI证书配置生成完成"
+echo "[√] SPKI证书配置生成完成（跳过不可达DNS）"
 
 
 # -------------------------- 4. 更新 SmartDNS 中国IP黑名单与域名列表 --------------------------
 echo "[模块4/6] 更新 SmartDNS 中国IP黑名单与域名列表..."
 # 4.1 中国IP黑名单（多源合并）
-qqwry_ip=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt)
-ipipnet_ip=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt)
-clang_ip=$(curl -sS --connect-timeout 5 https://ispip.clang.cn/all_cn.txt)
+qqwry_ip=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/metowolf/iplist/master/data/special/china.txt 2>/dev/null)
+ipipnet_ip=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt 2>/dev/null)
+clang_ip=$(curl -sS --connect-timeout 5 https://ispip.clang.cn/all_cn.txt 2>/dev/null)
 
 # 合并去重 + 转换为 SmartDNS 格式
 echo -e "${qqwry_ip}\n${ipipnet_ip}\n${clang_ip}" | \
   sort -u | sed -e '/^$/d' -e 's/^/blacklist-ip /g' | \
-  tee "${TARGET_DIR1}/smartdns/blacklist-ip.conf" "${TARGET_DIR2}/smartdns/blacklist-ip.conf" >/dev/null
+  tee "${TARGET_DIR1}/smartdns/blacklist-ip.conf" "${TARGET_DIR2}/smartdns/blacklist-ip.conf" >/dev/null 2>/dev/null
 
 # 4.2 中国域名列表（多源合并）
-accelerated_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf)
-apple_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf)
-google_cn_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf)
+accelerated_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/accelerated-domains.china.conf 2>/dev/null)
+apple_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/apple.china.conf 2>/dev/null)
+google_cn_domains=$(curl -sS --connect-timeout 5 https://raw.githubusercontent.com/felixonmars/dnsmasq-china-list/master/google.china.conf 2>/dev/null)
 
 # 合并去重 + 转换为 SmartDNS 格式
 echo -e "${accelerated_domains}\n${apple_domains}\n${google_cn_domains}" | \
   sort -u | sed -e 's/#.*//g; /^$/d; s/server=\///g; s/\/114.114.114.114//g' | \
   sed -e "s/^full://g; s/^regexp:.*$//g; s/^/nameserver \//g; s/$/\/china/g" | \
-  tee "${TARGET_DIR1}/smartdns/domain-set/domains.china.smartdns.conf" "${TARGET_DIR2}/smartdns/domain-set/domains.china.smartdns.conf" >/dev/null
+  tee "${TARGET_DIR1}/smartdns/domain-set/domains.china.smartdns.conf" "${TARGET_DIR2}/smartdns/domain-set/domains.china.smartdns.conf" >/dev/null 2>/dev/null
+
 echo "[√] 中国IP黑名单与域名列表更新完成"
 
 
 # -------------------------- 5. 生成 dnscrypt-proxy 配置文件 --------------------------
 echo "[模块5/6] 生成 dnscrypt-proxy 配置文件..."
-# 统一用wget增量下载（目录已存在，直接下载到目标路径）
-# 5.1 域名黑名单
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-blacklist-domains.txt"
-
-# 5.2 IP 黑名单
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-blacklist-ips.txt"
-
-# 5.3 Captive Portals 规则
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-captive-portals.txt"
-
-# 5.4 域名伪装规则
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-cloaking-rules.txt"
-
-# 5.5 转发规则
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-forwarding-rules.txt"
-
-# 5.6 域名白名单
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-whitelist-domains.txt"
-
-# 5.7 IP 白名单
-wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-whitelist-ips.txt"
+# 统一用wget增量下载（添加错误捕获）
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-blacklist-domains.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-blacklist-ips.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-captive-portals.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-cloaking-rules.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-forwarding-rules.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-whitelist-domains.txt" 2>/dev/null
+wget -q -N -P "$DNSPROXY_DIR" "https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/dnscrypt-whitelist-ips.txt" 2>/dev/null
 
 echo "[√] dnscrypt-proxy 配置文件生成完成"
 
 
 # -------------------------- 6. 清理临时文件 + 输出完成信息 --------------------------
 echo "[模块6/6] 清理临时文件..."
-rm -rf "$TMP_DIR"/*  # 仅清理临时文件，保留目录（符合“目录已存在”前提）
+rm -rf "$TMP_DIR"/*  # 仅清理临时文件，保留目录
 
 echo "======================================"
 echo "✅ 所有配置更新完成！输出目录："
