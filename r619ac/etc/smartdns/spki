@@ -1,3 +1,7 @@
 spki_cloudflare: SPfg6FluPIlUc6a5h313BDCxQYNGX+THTy7ig5X3+VA=
-spki_google: RqR2Ffxynfd0PikDOaZIYbkZ9MKwInvLR6KSRl6pIkw=
-spki_DNSPod: 5TIMjgyMhA0qmPdK+AM9LX6vNI/9EPBydh/ZXdfcYmI=
+spki_google_853: RqR2Ffxynfd0PikDOaZIYbkZ9MKwInvLR6KSRl6pIkw=
+spki_google_doh: 8CMdYzY9DAAhBq0B6aU+6ObZw03D8GQjQ63z5/qGYKU=
+spki_dnspod: 5TIMjgyMhA0qmPdK+AM9LX6vNI/9EPBydh/ZXdfcYmI=
+spki_tencent_119: 47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=
+spki_sb_public: amEjS6OJ74LvhMNJBxN3HXxOMSWAriaFoyMQn/Nb5FU=
+spki_opendns_cisco: oPU2uDzd0QMkEuxy5gJcJeRJgPe6Qe+6/sVuL2lGrNM=
