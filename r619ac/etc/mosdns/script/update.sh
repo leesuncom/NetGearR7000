@@ -39,5 +39,7 @@ mkdir -p /tmp/easymosdns \
 && curl https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt > /tmp/easymosdns/ip.txt \
 && curl https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt > /tmp/easymosdns/ipv6.txt \
 && cp -rf /tmp/easymosdns/*.txt $mosdns_working_dir/rule \
+&& /etc/init.d/mosdns restart \
+&& /etc/init.d/dnscrypt-proxy restart \
 && rm -rf /tmp/easymosdns/* \
 && echo 'update successful'
