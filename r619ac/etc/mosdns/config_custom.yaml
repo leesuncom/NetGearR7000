@@ -385,7 +385,7 @@ plugins:
         - path: /dns-query
           exec: main
       src_ip_header: "X-Forwarded-For"  # 从代理头获取客户端IP
-      listen: :5443  # DoH监听端口
+      listen: :5557  # DoH监听端口
       cert: "/etc/dnscrypt-proxy2/mosdns-cert.pem"  # DoT证书
       key: "/etc/dnscrypt-proxy2/mosdns-key.pem"
       idle_timeout: 30
