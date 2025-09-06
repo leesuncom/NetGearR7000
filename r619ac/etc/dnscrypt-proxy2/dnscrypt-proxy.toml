@@ -21,9 +21,9 @@ require_nofilter = true
 disabled_server_names = []
 
 # 代理设置 - 确保代理服务正常运行，mosdns在启用代理这里就不要启用了。
-proxy = 'socks5://127.0.0.1:7898'
-force_tcp = true
-http3 = false
+# proxy = 'socks5://127.0.0.1:7898'
+force_tcp = false
+# http3 = false
 
 # 超时和连接设置
 timeout = 10000
