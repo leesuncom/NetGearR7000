@@ -26,8 +26,8 @@ config dnsmasq
 	option nohosts '1'
 	option boguspriv '0'
 	option cachesize '0'
-	option port '0'
 	list server '127.0.0.1#7755'
+	option port '0'
 
 config dhcp 'lan'
 	option interface 'lan'
