@@ -98,42 +98,104 @@ echo "[√] mosdns规则列表更新完成"
 
 # -------------------------- 1. 生成 SmartDNS GFW 代理域名列表 --------------------------
 echo "[模块1/6] 生成 SmartDNS GFW 代理域名列表..."
+
+# 设置临时文件
+TMP_GFWLIST="${TMP_DIR}/proxy-domain-list.conf"
+TMP_SOURCES="${TMP_DIR}/gfw_sources"
+
+# 清空临时文件
+> "${TMP_GFWLIST}"
+mkdir -p "${TMP_SOURCES}"
+
 # 源1：gfwlist官方列表（Base64解码，添加错误捕获）
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt 2>/dev/null | \
-  base64 -d 2>/dev/null | sort -u | \
-  sed -e '/^$\|@@/d' -e 's#!.\+##; s#|##g; s#@##g; s#http://##; s#https://##;' | \
-  sed -e '/apple\.com/d; /sina\.cn/d; /sina\.com\.cn/d; /baidu\.com/d; /qq\.com/d' | \
-  sed -e '/^[0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+$/d' -e '/^[0-9a-zA-Z\.-]\+$/!d' | \
-  sed -e '/\./!d' -e 's#^\.\+##' > "${TMP_DIR}/temp_gfwlist1" 2>/dev/null
+echo "  处理源1: gfwlist官方列表..."
+curl -sS --connect-timeout 10 --max-time 30 \
+  https://raw.githubusercontent.com/gfwlist/gfwlist/master/gfwlist.txt 2>/dev/null | \
+  base64 -d 2>/dev/null | \
+  grep -E '^[^\!\|@]' | grep -v '^\[AutoProxy' | \
+  sed -e 's#^\.*##; s#^||##; s#^https\?://##; s#/.*$##' | \
+  grep -E '^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' | \
+  grep -v -E '(apple\.com|sina\.cn|sina\.com\.cn|baidu\.com|qq\.com|360\.cn|taobao\.com|alipay\.com)' | \
+  sort -u > "${TMP_SOURCES}/source1.txt" 2>/dev/null
 
-# 源2：fancyss GFW规则
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.conf 2>/dev/null | \
-  sed -e 's/ipset=\/\.//g; s/\/gfwlist//g; /^server/d' > "${TMP_DIR}/temp_gfwlist2" 2>/dev/null
-
-# 源3：Loyalsoldier GFW规则
-curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt 2>/dev/null > "${TMP_DIR}/temp_gfwlist3" 2>/dev/null
-
-# 合并所有源 + 补充自定义规则（容错：忽略不存在的文件）
-cat $(find "${TMP_DIR}" -name "temp_gfwlist*" -type f -size +0) 2>/dev/null | \
-  (if [ -f "script/extra.conf" ]; then cat "script/extra.conf"; fi) 2>/dev/null | \
-  sort -u | sed -e 's/^\.*//g; /^$/d' > "${TMP_DIR}/proxy-domain-list.conf" 2>/dev/null
-
-# 转换为 SmartDNS 格式（仅当文件存在时处理）
-if [ -f "${TMP_DIR}/proxy-domain-list.conf" ] && [ -s "${TMP_DIR}/proxy-domain-list.conf" ]; then
-  sed -i \
-    -e "s/^full://g" \
-    -e "s/^regexp:.*$//g" \
-    -e "s/^/nameserver \//g" \
-    -e "s/$/\/oversea/g" \
-    "${TMP_DIR}/proxy-domain-list.conf"
-  # 同步到双目标目录
-  cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR1}/smartdns/domain-set/" 2>/dev/null
-  cp "${TMP_DIR}/proxy-domain-list.conf" "${TARGET_DIR2}/smartdns/domain-set/" 2>/dev/null
-  echo "[√] GFW代理域名列表生成完成"
+# 检查源1是否成功
+if [ -s "${TMP_SOURCES}/source1.txt" ]; then
+  echo "  源1获取成功，找到 $(wc -l < "${TMP_SOURCES}/source1.txt") 个域名"
 else
-  echo "[!] GFW代理域名列表生成失败（无有效规则源）"
+  echo "  警告: 源1获取失败或为空"
 fi
 
+# 源2：fancyss GFW规则
+echo "  处理源2: fancyss GFW规则..."
+curl -sS --connect-timeout 10 --max-time 30 \
+  https://raw.githubusercontent.com/hq450/fancyss/master/rules/gfwlist.conf 2>/dev/null | \
+  sed -n 's/^server=\/\.\([^\/]*\)\/.*$/\1/p' | \
+  sort -u > "${TMP_SOURCES}/source2.txt" 2>/dev/null
+
+# 检查源2是否成功
+if [ -s "${TMP_SOURCES}/source2.txt" ]; then
+  echo "  源2获取成功，找到 $(wc -l < "${TMP_SOURCES}/source2.txt") 个域名"
+else
+  echo "  警告: 源2获取失败或为空"
+fi
+
+# 源3：Loyalsoldier GFW规则
+echo "  处理源3: Loyalsoldier GFW规则..."
+curl -sS --connect-timeout 10 --max-time 30 \
+  https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt 2>/dev/null | \
+  grep -v '^#' | grep -v '^$' | \
+  sed -e 's/^\.//' | \
+  sort -u > "${TMP_SOURCES}/source3.txt" 2>/dev/null
+
+# 检查源3是否成功
+if [ -s "${TMP_SOURCES}/source3.txt" ]; then
+  echo "  源3获取成功，找到 $(wc -l < "${TMP_SOURCES}/source3.txt") 个域名"
+else
+  echo "  警告: 源3获取失败或为空"
+fi
+
+# 合并所有源
+echo "  合并所有源..."
+cat "${TMP_SOURCES}/"source*.txt 2>/dev/null | \
+  sort -u | \
+  # 移除空行和注释
+  grep -v -E '^$|^#' | \
+  # 移除IP地址
+  grep -v -E '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$' | \
+  # 确保只保留有效域名
+  grep -E '^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$' | \
+  # 移除常见国内域名
+  grep -v -E '(\.cn$|\.com\.cn$|\.net\.cn$|\.org\.cn$|\.gov\.cn$|\.edu\.cn$|\.mil\.cn$)' > "${TMP_SOURCES}/merged.txt"
+
+# 添加自定义规则（如果存在）
+if [ -f "script/extra.conf" ] && [ -s "script/extra.conf" ]; then
+  echo "  添加自定义规则..."
+  cat "script/extra.conf" | grep -v '^#' | grep -v '^$' >> "${TMP_SOURCES}/merged.txt"
+  sort -u "${TMP_SOURCES}/merged.txt" -o "${TMP_SOURCES}/merged.txt"
+fi
+
+# 转换为 SmartDNS 格式
+if [ -s "${TMP_SOURCES}/merged.txt" ]; then
+  DOMAIN_COUNT=$(wc -l < "${TMP_SOURCES}/merged.txt")
+  echo "  找到 $DOMAIN_COUNT 个域名，转换为 SmartDNS 格式..."
+  
+  # 转换为 SmartDNS 格式
+  sed -e 's/^/nameserver \//; s/$/\/oversea/' "${TMP_SOURCES}/merged.txt" > "${TMP_GFWLIST}"
+  
+  # 同步到双目标目录
+  mkdir -p "${TARGET_DIR1}/smartdns/domain-set/" 2>/dev/null
+  mkdir -p "${TARGET_DIR2}/smartdns/domain-set/" 2>/dev/null
+  
+  cp "${TMP_GFWLIST}" "${TARGET_DIR1}/smartdns/domain-set/" 2>/dev/null
+  cp "${TMP_GFWLIST}" "${TARGET_DIR2}/smartdns/domain-set/" 2>/dev/null
+  
+  echo "[√] GFW代理域名列表生成完成，共 $DOMAIN_COUNT 个域名"
+else
+  echo "[!] GFW代理域名列表生成失败（无有效规则源）"
+  # 创建空文件避免后续错误
+  touch "${TARGET_DIR1}/smartdns/domain-set/proxy-domain-list.conf" 2>/dev/null
+  touch "${TARGET_DIR2}/smartdns/domain-set/proxy-domain-list.conf" 2>/dev/null
+fi
 
 # -------------------------- 2. 更新 SmartDNS 广告过滤与 Cloudflare IP 列表 --------------------------
 echo "[模块2/6] 更新 SmartDNS 广告过滤与 Cloudflare IP 列表..."
