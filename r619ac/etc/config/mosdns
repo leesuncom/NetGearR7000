@@ -8,5 +8,4 @@ config mosdns 'config'
 	option redirect '1'
 	option geoip_type 'geoip'
 	option github_proxy 'https://gh-proxy.com'
-	option local_dns_redirect '1'
 

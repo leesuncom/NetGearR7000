@@ -26,6 +26,7 @@ config dnsmasq
 	option nohosts '1'
 	option boguspriv '0'
 	option cachesize '0'
+	option port '0'
 	list server '127.0.0.1#7755'
 
 config dhcp 'lan'
@@ -36,6 +37,7 @@ config dhcp 'lan'
 	option dhcpv4 'server'
 	option ignore '1'
 	option dynamicdhcp '0'
+	list dhcp_option '6,192.168.1.2'
 
 config odhcpd 'odhcpd'
 	option maindhcp '0'

@@ -103,7 +103,7 @@ plugins:
         - addr: "https://127.0.0.1:7058/dns-query"  # 本地代理后的DoH服务
           enable_http3: false
         #  insecure_skip_verify: true  # 跳过证书验证（本地代理场景常用）
-          socks5: "127.0.0.1:7898"  # SOCKS5代理（暂不支持用户名密码）
+        #  socks5: "127.0.0.1:7898"  # SOCKS5代理（暂不支持用户名密码）
         
         # 备选远程DNS（注释禁用，按需启用）
         # - addr: "https://doh.opendns.com/dns-query"  # OpenDNS DoH

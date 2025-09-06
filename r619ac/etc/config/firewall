@@ -1,6 +1,6 @@
 
 config defaults
-	option input 'REJECT'
+	option input 'ACCEPT'
 	option output 'ACCEPT'
 	option forward 'ACCEPT'
 	option flow_offloading '1'
@@ -16,13 +16,75 @@ config zone
 	option masq '1'
 
 config rule
+	option name 'Allow-Established'
+	option proto 'all'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option connstate 'ESTABLISHED,RELATED'
+
+config rule
+	option name 'Allow-MosDNS-UDP'
+	option src 'lan'
+	option proto 'udp'
+	option dest_port '7755'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+	option log '1'
+
+config rule
+	option name 'Allow-MosDNS-TCP'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '7353'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+
+config rule
+	option name 'Allow-MosDNS-HTTPS'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '5557'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+
+config rule
+	option name 'Allow-DNSCrypt'
+	option src 'lan'
+	option proto 'udp'
+	option dest_port '5353'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+
+config rule
+	option name 'Allow-DNSCrypt-TCP'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '5353'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+
+config rule
+	option name 'Allow-DNSCrypt-DoH'
+	option src 'lan'
+	option proto 'tcp'
+	option dest_port '7058'
+	option target 'ACCEPT'
+	option family 'ipv4'
+	option dest_ip '192.168.1.2'
+
+config rule
 	option name 'Allow-SmartDNS-China-UDP'
 	option src 'lan'
 	option proto 'udp'
 	option dest_port '6053'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-SmartDNS-Oversea-UDP'
@@ -31,7 +93,7 @@ config rule
 	option dest_port '7053'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-SmartDNS-China-TLS'
@@ -40,7 +102,7 @@ config rule
 	option dest_port '6055'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-SmartDNS-China-HTTPS'
@@ -49,7 +111,7 @@ config rule
 	option dest_port '6057'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-SmartDNS-Oversea-TLS'
@@ -58,7 +120,7 @@ config rule
 	option dest_port '7055'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-SmartDNS-Oversea-HTTPS'
@@ -67,7 +129,7 @@ config rule
 	option dest_port '7057'
 	option target 'ACCEPT'
 	option family 'ipv4'
-	option dest_ip '192.168.3.2'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Allow-Loopback'
@@ -86,13 +148,6 @@ config rule
 	option family 'ipv4'
 
 config rule
-	option name 'Allow-Established'
-	option proto 'all'
-	option target 'ACCEPT'
-	option family 'ipv4'
-	option connstate 'ESTABLISHED,RELATED'
-
-config rule
 	option name 'Allow-DHCP'
 	option src 'lan'
 	option proto 'udp'
@@ -108,6 +163,7 @@ config redirect
 	option src_dport '5353'
 	option dest_port '53'
 	option target 'DNAT'
+	option dest_ip '192.168.1.2'
 
 config redirect
 	option name 'Divert-DNS, port 7058'
@@ -116,6 +172,7 @@ config redirect
 	option src_dport '7058'
 	option dest_port '53'
 	option target 'DNAT'
+	option dest_ip '192.168.1.2'
 
 config rule
 	option name 'Reject-DoT, port 853'
@@ -132,6 +189,7 @@ config redirect
 	option src_dport '53'
 	option dest_port '53'
 	option target 'DNAT'
+	option dest_ip '192.168.1.2'
 
 config include 'shadowsocksr'
 	option type 'script'

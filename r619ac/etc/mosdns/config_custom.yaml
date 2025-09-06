@@ -373,8 +373,8 @@ plugins:
     args:
       entry: main
       listen: ":7353"
-      cert: "/etc/nginx/conf.d/_lan.crt"  # DoT证书
-      key: "/etc/nginx/conf.d/_lan.key"
+      cert: "/etc/dnscrypt-proxy2/mosdns-cert.pem"  # DoT证书
+      key: "/etc/dnscrypt-proxy2/mosdns-key.pem"
       idle_timeout: 10  # 空连接超时
 
   # HTTP服务器（支持DoH）
@@ -386,6 +386,6 @@ plugins:
           exec: main
       src_ip_header: "X-Forwarded-For"  # 从代理头获取客户端IP
       listen: :5443  # DoH监听端口
-      cert: "/etc/nginx/conf.d/_lan.crt"  # DoH证书
-      key: "/etc/nginx/conf.d/_lan.key"
+      cert: "/etc/dnscrypt-proxy2/mosdns-cert.pem"  # DoT证书
+      key: "/etc/dnscrypt-proxy2/mosdns-key.pem"
       idle_timeout: 30
