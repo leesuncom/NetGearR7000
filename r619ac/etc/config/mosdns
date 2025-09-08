@@ -7,4 +7,6 @@ config mosdns 'config'
 	option configfile '/etc/mosdns/config_custom.yaml'
 	option geoip_type 'geoip'
 	option github_proxy 'https://gh-proxy.com'
+	option redirect '1'
+	option local_dns_redirect '1'
 

@@ -54,6 +54,15 @@ plugins:
   #     upstream:
   #       - addr: "192.168.1.1" # 局域网网关DNS
 
+
+  # 本地运营商DNS转发配置
+  - tag: "forward_local"
+    type: forward
+    args:
+      concurrent: 1
+      upstreams:
+        - addr: "https://127.0.0.1:7057/dns-query"  # 运营商DNS（需根据实际环境修改）
+
   # DNSPod（腾讯云DNS）转发配置
   - tag: "forward_dnspod"
     type: forward
@@ -63,14 +72,6 @@ plugins:
         - addr: "https://doh.pub/dns-query"  # DNSPod的DoH地址
           dial_addr: "120.53.53.53"          # 强制拨号IP（DNSPod服务器）
           enable_http3: false                # 禁用HTTP/3
-
-  # 本地运营商DNS转发配置
-  - tag: "forward_local"
-    type: forward
-    args:
-      concurrent: 1
-      upstreams:
-        - addr: "119.29.29.29"  # 运营商DNS（需根据实际环境修改）
 
   # 阿里云DNS转发配置
   - tag: "forward_alidns"
@@ -100,9 +101,9 @@ plugins:
     args:
       concurrent: 1  # 并发数：每次随机选择N个上游，取最快响应（最大3）
       upstreams:
-        - addr: "https://127.0.0.1:7058/dns-query"  # 本地代理后的DoH服务
+        - addr: "https://127.0.0.1:7057/dns-query"  # 本地代理后的DoH服务
           enable_http3: false
-        #  insecure_skip_verify: true  # 跳过证书验证（本地代理场景常用）
+          insecure_skip_verify: true  # 跳过证书验证（本地代理场景常用）
         #  socks5: "127.0.0.1:7898"  # SOCKS5代理（暂不支持用户名密码）
         
         # 备选远程DNS（注释禁用，按需启用）

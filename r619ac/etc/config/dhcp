@@ -15,7 +15,6 @@ config dnsmasq
 	option filter_aaaa '1'
 	option sequential_ip '1'
 	option allservers '1'
-	option noresolv '0'
 	option ignore_hosts_dir '1'
 	list interface 'lan'
 	option strictorder '1'
@@ -25,7 +24,10 @@ config dnsmasq
 	option readethers '1'
 	option nohosts '1'
 	option boguspriv '0'
+	option cachesize '0'
 	option port '0'
+	option noresolv '0'
+	list server '127.0.0.1#7755'
 
 config dhcp 'lan'
 	option interface 'lan'
