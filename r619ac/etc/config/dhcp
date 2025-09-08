@@ -25,8 +25,8 @@ config dnsmasq
 	option boguspriv '0'
 	option noresolv '1'
 	option cachesize '0'
-	list server '127.0.0.1#5335'
 	option strictorder '1'
+	list server '127.0.0.1#5335'
 
 config dhcp 'lan'
 	option interface 'lan'
