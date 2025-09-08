@@ -61,7 +61,7 @@ plugins:
     args:
       concurrent: 1
       upstreams:
-        - addr: "https://127.0.0.1:7057/dns-query"  # 运营商DNS（需根据实际环境修改）
+        - addr: "https://127.0.0.1:6057/dns-query"  # 运营商DNS（需根据实际环境修改）
 
   # DNSPod（腾讯云DNS）转发配置
   - tag: "forward_dnspod"
