@@ -19,7 +19,7 @@ config dnsmasq
 	list server '127.0.0.1#7755'
 	option ignore_hosts_dir '1'
 	option nohosts '1'
-	option filter_aaaa '1'
+	option dns_redirect '1'
 
 config dhcp 'lan'
 	option interface 'lan'
