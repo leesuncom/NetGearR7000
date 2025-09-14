@@ -43,6 +43,10 @@ curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGe
 curl -sS -L "https://www.cloudflare.com/ips-v4/" \
   -o "$TMP_DIR/cloudflare-ipv4.txt" && sudo cp "$TMP_DIR/cloudflare-ipv4.txt" /etc/smartdns/ip-set/
 
+# 4.2.1 更新 ip-set 列表（官方源，无需代理）
+curl -sS -L "${GITHUB_PROXY}https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt" \
+  -o "$TMP_DIR/china_ip_list.txt" && sudo cp "$TMP_DIR/china_ip_list.txt" /etc/smartdns/ip-set/
+
 # 4.3 更新 中国域名列表
 curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/domain-set/domains.china.smartdns.conf" \
   -o "$TMP_DIR/domains.china.smartdns.conf" && sudo cp "$TMP_DIR/domains.china.smartdns.conf" /etc/smartdns/domain-set/

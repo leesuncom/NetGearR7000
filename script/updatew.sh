@@ -207,6 +207,10 @@ curl -sS --connect-timeout 5 https://raw.githubusercontent.com/Cats-Team/AdRules
 curl -sS --connect-timeout 5 https://www.cloudflare.com/ips-v4/ 2>/dev/null | \
   tee "${TARGET_DIR1}/smartdns/ip-set/cloudflare-ipv4.txt" "${TARGET_DIR2}/smartdns/ip-set/cloudflare-ipv4.txt" >/dev/null 2>/dev/null
 
+# 2.2.1 Cloudflare IPv4 列表（官方源）
+curl -sS --connect-timeout 5 https://raw.githubusercontent.com/17mon/china_ip_list/master/china_ip_list.txt 2>/dev/null | \
+  tee "${TARGET_DIR1}/smartdns/ip-set/china_ip_list.txt" "${TARGET_DIR2}/smartdns/ip-set/china_ip_list.txt" >/dev/null 2>/dev/null
+
 # 2.3 反广告补充规则（anti-ad 源）
 curl -sS --connect-timeout 5 https://anti-ad.net/anti-ad-for-smartdns.conf 2>/dev/null | \
   tee "${TARGET_DIR1}/smartdns/conf.d/anti-ad-smartdns.conf" "${TARGET_DIR2}/smartdns/conf.d/anti-ad-smartdns.conf" >/dev/null 2>/dev/null
