@@ -108,18 +108,6 @@ jobs:
       run: |
         [ -e $FEEDS_CONF ] && cp $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P0_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P0_SH
-        mkdir -p files/etc/config
-        mkdir -p files/etc/smartdns
-        mkdir -p files/etc/opkg
-        mkdir -p files/etc/crontabs
-        SRC_DIR="../r619ac/etc"
-        cp -rfv $SRC_DIR/* files/etc/ || true
-        chmod 755 files/etc/updatew.sh || true
-        chmod 755 files/etc/mosdns/script/flush_cache.sh
-        chmod 755 files/etc/mosdns/script/update.sh
-        chmod 755 files/etc/init.d/cert_bootstrap
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
@@ -129,7 +117,7 @@ jobs:
         chmod +x $DIY_P1_SH
         cd openwrt
         $GITHUB_WORKSPACE/$DIY_P1_SH
-        wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+        # wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
         
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
