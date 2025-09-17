@@ -6,7 +6,7 @@ on:
   schedule:
     - cron: 50 00 * * MON
 env:
-  REPO_URL: https://github.com/immortalwrt/immortalwrt
+  REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-24.10
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: r619im-6.6.config
