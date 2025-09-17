@@ -1,5 +1,0 @@
-full:docs.amd.com
-aws.antidot.net
-fluidtopics.net
-
-global.dns.qwilted-cds.cqloud.com
