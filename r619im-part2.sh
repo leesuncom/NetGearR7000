@@ -22,20 +22,20 @@ sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/M
 # Modify hostname
 sed -i 's/ImmortalWrt/R619AC/g' package/base-files/files/bin/config_generate
 
-sed -i -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
+# sed -i -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
 
-rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
-wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
+# rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
+# wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
 
 # 移除procd-ujail
-sed -i "s/procd-ujail//" include/target.mk
+# sed -i "s/procd-ujail//" include/target.mk
 
 # 修改终端启动行为
-sed -i 's/max_requests 3/max_requests 20/g' package/network/services/uhttpd/files/uhttpd.config
-sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/inittab
+# sed -i 's/max_requests 3/max_requests 20/g' package/network/services/uhttpd/files/uhttpd.config
+# sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/inittab
 
 # 移除jool包
-rm -rf package/feeds/packages/jool
+# rm -rf package/feeds/packages/jool
 
 
 #sed -i "s/odhcp6c/#odhcp6c/" include/target.mk
