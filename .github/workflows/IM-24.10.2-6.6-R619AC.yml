@@ -9,10 +9,8 @@ env:
   REPO_URL: https://github.com/openwrt/openwrt
   REPO_BRANCH: openwrt-24.10
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: r619im-6.6.config
-  DIY_P0_SH: r619im-part0.sh
-  DIY_P1_SH: r619im-part1.sh
-  DIY_P2_SH: r619im-part2.sh
+  CONFIG_FILE: r619op-6.6.config
+  DIY_P0_SH: r619op-part0.sh
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: true
   UPLOAD_FIRMWARE: true
@@ -108,29 +106,6 @@ jobs:
       run: |
         [ -e $FEEDS_CONF ] && cp $FEEDS_CONF openwrt/feeds.conf.default
         chmod +x $DIY_P0_SH
-
-    - name: Update feeds
-      run: cd openwrt && ./scripts/feeds update -a
-
-    - name: Run diy shell 1 before install feeds
-      run: |
-        chmod +x $DIY_P1_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P1_SH
-        wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
-        
-    - name: Install feeds
-      run: cd openwrt && ./scripts/feeds install -a
-
-    - name: Load custom configuration & run diy shell 2 after install feeds
-      run: |
-        [ -e files ] && mv files openwrt/files
-        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
-        chmod +x $DIY_P2_SH
-        cd openwrt
-        $GITHUB_WORKSPACE/$DIY_P2_SH
-        sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
-        # wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
         
     - name: Download package
       id: package
