@@ -25,14 +25,13 @@ sed -i 's/ImmortalWrt/R619AC/g' package/base-files/files/bin/config_generate
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 # sed -i -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
-sed -i 's/geoip-only-cn-private.dat/geoip.dat/g' feeds/packages/v2ray-geodata/Makefile   # 修改geoip.dat 
 # sed -i 's/--set=llvm.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile   # 修复rust编译失败 
 
 # rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
 # wget -N https://raw.githubusercontent.com/coolsnowwolf/lede/master/target/linux/generic/pending-6.6/613-netfilter_optional_tcp_window_check.patch -P target/linux/generic/pending-6.6/
 
 # 移除procd-ujail
-sed -i "s/procd-ujail//" include/target.mk
+# sed -i "s/procd-ujail//" include/target.mk
 
 # 修改终端启动行为
 sed -i 's/max_requests 3/max_requests 20/g' package/network/services/uhttpd/files/uhttpd.config
@@ -42,9 +41,8 @@ sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/
 rm -rf package/feeds/packages/jool
 
 
-sed -i "s/odhcp6c/#odhcp6c/" include/target.mk
-sed -i "s/odhcpd-ipv6only/#odhcpd-ipv6only/" include/target.mk
-sed -i "s/luci-app-cpufreq/#luci-app-cpufreq/" include/target.mk
-sed -i "s/procd-ujail//" include/target.mk
+# sed -i "s/odhcp6c/#odhcp6c/" include/target.mk
+# sed -i "s/odhcpd-ipv6only/#odhcpd-ipv6only/" include/target.mk
+# sed -i "s/luci-app-cpufreq/#luci-app-cpufreq/" include/target.mk
 
 # wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
