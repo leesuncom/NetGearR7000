@@ -16,11 +16,8 @@ config dnsmasq
 	option allservers '1'
 	option min_ttl '3600'
 	option dnsforwardmax '8192'
-	option dns_redirect '1'
 	option sequential_ip '1'
 	option ignore_hosts_dir '1'
-	option nohosts '1'
-	option rebind_localhost '1'
 	option noresolv '1'
 	list server '127.0.0.1#7755'
 
