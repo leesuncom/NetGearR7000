@@ -25,7 +25,7 @@ sed -i 's/ImmortalWrt/R619AC/g' package/base-files/files/bin/config_generate
 wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 # sed -i -e 's/\bluci-app-cpufreq\b/#&/g' include/target.mk
-sed -i 's/geoip-only-cn-private.dat/geoip.dat/g' feeds/packages/net/v2ray-geodata/Makefile   # 修改geoip.dat 
+sed -i 's/geoip-only-cn-private.dat/geoip.dat/g' feeds/packages/v2ray-geodata/Makefile   # 修改geoip.dat 
 # sed -i 's/--set=llvm.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile   # 修复rust编译失败 
 
 # rm -rf target/linux/generic/hack-6.6/767-net-phy-realtek-add-led*
