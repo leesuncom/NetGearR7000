@@ -28,7 +28,7 @@ config interface 'lan'
 config interface 'wan'
 	option device 'wan'
 	option proto 'pppoe'
-	option username '17371063072'
+	option username '17171063072'
 	option password '134013'
 	option ipv6 '0'
 
