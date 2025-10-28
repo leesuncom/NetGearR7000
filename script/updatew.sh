@@ -33,60 +33,60 @@ mosdns_working_dir="r619ac/etc/mosdns"
 mkdir -p /tmp/easymosdns && rm -rf /tmp/easymosdns/*
 
 # 下载akamai相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" > "/tmp/easymosdns/akamai_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" > "/tmp/easymosdns/akamai_domain_list.txt" 2>/dev/null
 # 下载基础拦截规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" > "/tmp/easymosdns/block_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" > "/tmp/easymosdns/block_list.txt" 2>/dev/null
 # 下载CDN相关IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" > "/tmp/easymosdns/cachefly_ipv4.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" > "/tmp/easymosdns/cdn77_ipv4.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" > "/tmp/easymosdns/cdn77_ipv6.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" > "/tmp/easymosdns/cachefly_ipv4.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" > "/tmp/easymosdns/cdn77_ipv4.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" > "/tmp/easymosdns/cdn77_ipv6.txt" 2>/dev/null
 # 下载国内域名规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/china_domain_list_mini.txt" > "/tmp/easymosdns/china_domain_list_mini.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/china_domain_list_mini.txt" > "/tmp/easymosdns/china_domain_list_mini.txt" 2>/dev/null
 # 下载Cloudflare相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront.txt" > "/tmp/easymosdns/cloudfront.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront_ipv6.txt" > "/tmp/easymosdns/cloudfront_ipv6.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront.txt" > "/tmp/easymosdns/cloudfront.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/cloudfront_ipv6.txt" > "/tmp/easymosdns/cloudfront_ipv6.txt" 2>/dev/null
 # 下载自定义规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" > "/tmp/easymosdns/custom_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" > "/tmp/easymosdns/custom_list.txt" 2>/dev/null
 # 下载GFW相关IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" > "/tmp/easymosdns/gfw_ip_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" > "/tmp/easymosdns/gfw_ip_list.txt" 2>/dev/null
 # 下载灰色地带规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" > "/tmp/easymosdns/grey_list_js.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" > "/tmp/easymosdns/grey_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" > "/tmp/easymosdns/grey_list_js.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" > "/tmp/easymosdns/grey_list.txt" 2>/dev/null
 # 下载CDN hosts规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" > "/tmp/easymosdns/hosts_akamai.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" > "/tmp/easymosdns/hosts_fastly.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" > "/tmp/easymosdns/hosts_akamai.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" > "/tmp/easymosdns/hosts_fastly.txt" 2>/dev/null
 # 下载DNS列表规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" > "/tmp/easymosdns/jp_dns_list.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" > "/tmp/easymosdns/us_dns_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" > "/tmp/easymosdns/jp_dns_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" > "/tmp/easymosdns/us_dns_list.txt" 2>/dev/null
 # 下载原始域名规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt" > "/tmp/easymosdns/original_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/original_domain_list.txt" > "/tmp/easymosdns/original_domain_list.txt" 2>/dev/null
 # 下载IPv6相关规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt" > "/tmp/easymosdns/ipv6_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/ipv6_domain_list.txt" > "/tmp/easymosdns/ipv6_domain_list.txt" 2>/dev/null
 # 下载私有IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt" > "/tmp/easymosdns/private.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/private.txt" > "/tmp/easymosdns/private.txt" 2>/dev/null
 # 下载重定向规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" > "/tmp/easymosdns/redirect.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" > "/tmp/easymosdns/redirect.txt" 2>/dev/null
 # 下载Sucuri IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" > "/tmp/easymosdns/sucuri_ipv4.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" > "/tmp/easymosdns/sucuri_ipv4.txt" 2>/dev/null
 # 下载白名单规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" > "/tmp/easymosdns/white_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" > "/tmp/easymosdns/white_list.txt" 2>/dev/null
 # 下载社交媒体IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" > "/tmp/easymosdns/facebook.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt" > "/tmp/easymosdns/telegram.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt" > "/tmp/easymosdns/twitter.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" > "/tmp/easymosdns/facebook.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/telegram.txt" > "/tmp/easymosdns/telegram.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/twitter.txt" > "/tmp/easymosdns/twitter.txt" 2>/dev/null
 # 下载CDN IP规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt" > "/tmp/easymosdns/fastly.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/fastly.txt" > "/tmp/easymosdns/fastly.txt" 2>/dev/null
 # 下载GFW和防火长城规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt" > "/tmp/easymosdns/gfw.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt" > "/tmp/easymosdns/greatfire.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/gfw.txt" > "/tmp/easymosdns/gfw.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/release/greatfire.txt" > "/tmp/easymosdns/greatfire.txt" 2>/dev/null
 # 下载easymosdns专用规则
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt" > "/tmp/easymosdns/ad_domain_list.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt" > "/tmp/easymosdns/cdn_domain_list.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt" > "/tmp/easymosdns/china_domain_list.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt" > "/tmp/easymosdns/china_ip_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/pmkol/easymosdns/rules/ad_domain_list.txt" > "/tmp/easymosdns/ad_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/pmkol/easymosdns/rules/cdn_domain_list.txt" > "/tmp/easymosdns/cdn_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_domain_list.txt" > "/tmp/easymosdns/china_domain_list.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/pmkol/easymosdns/rules/china_ip_list.txt" > "/tmp/easymosdns/china_ip_list.txt" 2>/dev/null
 # 下载Cloudflare IP列表
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" > "/tmp/easymosdns/ip.txt" 2>/dev/null
-curl -sS --connect-timeout 5 "https://github.boki.moe/https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" > "/tmp/easymosdns/ipv6.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" > "/tmp/easymosdns/ip.txt" 2>/dev/null
+curl -sS --connect-timeout 5 "https://raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" > "/tmp/easymosdns/ipv6.txt" 2>/dev/null
 
 # 复制规则文件到工作目录（忽略空文件）
 find /tmp/easymosdns -type f -size +0 -exec cp {} "${mosdns_working_dir}/rule/" \;
