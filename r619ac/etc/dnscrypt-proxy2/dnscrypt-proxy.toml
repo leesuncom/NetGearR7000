@@ -12,7 +12,7 @@ ipv6_servers = false
 # 协议支持
 dnscrypt_servers = true
 doh_servers = true
-odoh_servers = false
+odoh_servers = true
 
 # 服务器要求
 require_dnssec = false
@@ -144,9 +144,21 @@ cert_key_file = '/etc/dnscrypt-proxy2/mosdns-key.pem'
     refresh_delay = 72
     prefix = ''
   [sources.parental-control]
-    urls = ['https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/parental-control.md', 'https://download.dnscrypt.info/resolvers-list/v3/parental-control.md', 'https://ipv6.download.dnscrypt.info/resolvers-list/v3/parental-control.md']
+    urls = ['https://download.dnscrypt.info/resolvers-list/v3/parental-control.md', 'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/parental-control.md', 'https://ipv6.download.dnscrypt.info/resolvers-list/v3/parental-control.md']
     cache_file = 'parental-control.md'
     minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+  [sources.odoh-servers]
+    urls = ['https://download.dnscrypt.info/resolvers-list/v3/odoh-servers.md', 'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/odoh-servers.md', 'https://ipv6.download.dnscrypt.info/resolvers-list/v3/odoh-servers.md']
+    cache_file = 'odoh-servers.md'
+    minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+    refresh_delay = 24
+    prefix = ''
+  [sources.odoh-relays]
+    urls = ['https://download.dnscrypt.info/resolvers-list/v3/odoh-relays.md', 'https://raw.githubusercontent.com/DNSCrypt/dnscrypt-resolvers/master/v3/odoh-relays.md', 'https://ipv6.download.dnscrypt.info/resolvers-list/v3/odoh-relays.md']
+    cache_file = 'odoh-relays.md'
+    minisign_key = 'RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3'
+    refresh_delay = 24
+    prefix = ''
 
 # 兼容性设置
 [broken_implementations]
