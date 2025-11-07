@@ -36,7 +36,7 @@ echo "[√] Hosts 更新完成"
 # -------------------------- 4. 更新 SmartDNS 相关规则 --------------------------
 echo "[3/6] 更新 SmartDNS 规则文件..."
 # 4.1 更新 IP 黑名单
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/blacklist-ip.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/blacklist-ip.conf" \
   -o "$TMP_DIR/blacklist-ip.conf" && sudo cp "$TMP_DIR/blacklist-ip.conf" /etc/smartdns/
 
 # 4.2 更新 Cloudflare IPv4 列表（官方源，无需代理）
@@ -48,11 +48,11 @@ curl -sS -L "${GITHUB_PROXY}https://raw.githubusercontent.com/17mon/china_ip_lis
   -o "$TMP_DIR/china_ip_list.txt" && sudo cp "$TMP_DIR/china_ip_list.txt" /etc/smartdns/ip-set/
 
 # 4.3 更新 中国域名列表
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/domain-set/domains.china.smartdns.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/domain-set/domains.china.smartdns.conf" \
   -o "$TMP_DIR/domains.china.smartdns.conf" && sudo cp "$TMP_DIR/domains.china.smartdns.conf" /etc/smartdns/domain-set/
 
 # 4.4 更新 GFW 代理域名列表
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/domain-set/proxy-domain-list.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/domain-set/proxy-domain-list.conf" \
   -o "$TMP_DIR/proxy-domain-list.conf" && sudo cp "$TMP_DIR/proxy-domain-list.conf" /etc/smartdns/domain-set/
 
 # 4.5 更新 广告过滤规则（Cats-Team 源）
