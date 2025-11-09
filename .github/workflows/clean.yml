@@ -8,17 +8,15 @@ on:
 jobs:
   delete_runs:
     runs-on: ubuntu-latest
+    permissions:
+      actions: write  
+      contents: read  
+    
     steps:
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@v2
-      with:
-       token: ${{ secrets.GITHUB_TOKEN }}
-       repo: leesuncom/NetGearR7000
-       workflow_file_name: Update.yml,clean.yml
-       branch: main
-       run_conclusions: |
-          failure
-          timed_out
-       save_period: 1
-       save_min_runs_number: 1
-       dry: true
+      - name: Delete Workflow Runs Older Than 1 Day
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 1
+          keep_minimum_runs: 0 
