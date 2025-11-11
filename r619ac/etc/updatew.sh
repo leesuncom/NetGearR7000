@@ -101,7 +101,7 @@ curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-
 
 # 5.8 IP 白名单
 curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/relays.md" \
-  -o "$DNSCRYPT_CONF_DIR/relays.md.txt"
+  -o "$DNSCRYPT_CONF_DIR/relays.md"
 
 # 5.9 IP 白名单
 curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/public-resolvers.md" \
