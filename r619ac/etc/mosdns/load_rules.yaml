@@ -57,21 +57,21 @@ plugins:
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/white_list.txt"  # 规则源：Journalist-HK/Rules
+        - "/etc/mosdns/rule/whitelist.txt"  # 规则源：Journalist-HK/Rules
 
   # 黑名单域名（如广告、恶意域名，直接拦截）
   - tag: blocklist
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/block_list.txt"  # 规则源：Journalist-HK/Rules
+        - "/etc/mosdns/rule/blocklist.txt"  # 规则源：Journalist-HK/Rules
 
   # 污染域名集合（需通过特殊DNS解析的被污染域名）
   - tag: greylist
     type: domain_set
     args:
       files:
-        - "/etc/mosdns/rule/grey_list.txt"  # 规则源：Journalist-HK/Rules
+        - "/etc/mosdns/rule/greylist.txt"  # 规则源：Journalist-HK/Rules
 
   # IPv6优先域名（优先返回IPv6解析结果的域名）
   - tag: ipv6list
