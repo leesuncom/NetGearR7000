@@ -129,7 +129,7 @@ mkdir -p "$MOSDNS_RULE_DIR"
 
 # 6.1 Journalist-HK 规则集
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" -o "$TMP_DIR/akamai_domain_list.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" -o "$TMP_DIR/block_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" -o "$TMP_DIR/blocklist.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" -o "$TMP_DIR/cachefly_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" -o "$TMP_DIR/cdn77_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" -o "$TMP_DIR/cdn77_ipv6.txt"
@@ -139,7 +139,7 @@ curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" -o "$TMP_DIR/custom_list.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" -o "$TMP_DIR/gfw_ip_list.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" -o "$TMP_DIR/grey_list_js.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" -o "$TMP_DIR/grey_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" -o "$TMP_DIR/greylist.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" -o "$TMP_DIR/hosts_akamai.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" -o "$TMP_DIR/hosts_fastly.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" -o "$TMP_DIR/jp_dns_list.txt"
@@ -149,7 +149,7 @@ curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" -o "$TMP_DIR/redirect.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" -o "$TMP_DIR/sucuri_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" -o "$TMP_DIR/us_dns_list.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" -o "$TMP_DIR/white_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" -o "$TMP_DIR/whitelist.txt"
 
 # 6.2 Loyalsoldier 规则集（GeoIP/GFW 列表）
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" -o "$TMP_DIR/facebook.txt"
