@@ -36,7 +36,7 @@ echo "[√] Hosts 更新完成"
 # -------------------------- 4. 更新 SmartDNS 相关规则 --------------------------
 echo "[3/6] 更新 SmartDNS 规则文件..."
 # 4.1 更新 IP 黑名单
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/blacklist-ip.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/blacklist-ip.conf" \
   -o "$TMP_DIR/blacklist-ip.conf" && sudo cp "$TMP_DIR/blacklist-ip.conf" /etc/smartdns/
 
 # 4.2 更新 Cloudflare IPv4 列表（官方源，无需代理）
@@ -48,11 +48,11 @@ curl -sS -L "${GITHUB_PROXY}https://raw.githubusercontent.com/17mon/china_ip_lis
   -o "$TMP_DIR/china_ip_list.txt" && sudo cp "$TMP_DIR/china_ip_list.txt" /etc/smartdns/ip-set/
 
 # 4.3 更新 中国域名列表
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/domain-set/domains.china.smartdns.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/domain-set/domains.china.smartdns.conf" \
   -o "$TMP_DIR/domains.china.smartdns.conf" && sudo cp "$TMP_DIR/domains.china.smartdns.conf" /etc/smartdns/domain-set/
 
 # 4.4 更新 GFW 代理域名列表
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/NetGearR7000/main/common/etc/smartdns/domain-set/proxy-domain-list.conf" \
+curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/update/refs/heads/main/r619ac/etc/smartdns/domain-set/proxy-domain-list.conf" \
   -o "$TMP_DIR/proxy-domain-list.conf" && sudo cp "$TMP_DIR/proxy-domain-list.conf" /etc/smartdns/domain-set/
 
 # 4.5 更新 广告过滤规则（Cats-Team 源）
@@ -101,7 +101,7 @@ curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-
 
 # 5.8 IP 白名单
 curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/relays.md" \
-  -o "$DNSCRYPT_CONF_DIR/relays.md.txt"
+  -o "$DNSCRYPT_CONF_DIR/relays.md"
 
 # 5.9 IP 白名单
 curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/public-resolvers.md" \
@@ -129,7 +129,7 @@ mkdir -p "$MOSDNS_RULE_DIR"
 
 # 6.1 Journalist-HK 规则集
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/akamai_domain_list.txt" -o "$TMP_DIR/akamai_domain_list.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" -o "$TMP_DIR/block_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/block_list.txt" -o "$TMP_DIR/blocklist.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cachefly_ipv4.txt" -o "$TMP_DIR/cachefly_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv4.txt" -o "$TMP_DIR/cdn77_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/cdn77_ipv6.txt" -o "$TMP_DIR/cdn77_ipv6.txt"
@@ -139,7 +139,7 @@ curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/custom_list.txt" -o "$TMP_DIR/custom_list.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/gfw_ip_list.txt" -o "$TMP_DIR/gfw_ip_list.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list_js.txt" -o "$TMP_DIR/grey_list_js.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" -o "$TMP_DIR/grey_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/grey_list.txt" -o "$TMP_DIR/greylist.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_akamai.txt" -o "$TMP_DIR/hosts_akamai.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/hosts_fastly.txt" -o "$TMP_DIR/hosts_fastly.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/jp_dns_list.txt" -o "$TMP_DIR/jp_dns_list.txt"
@@ -149,7 +149,7 @@ curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/redirect.txt" -o "$TMP_DIR/redirect.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/sucuri_ipv4.txt" -o "$TMP_DIR/sucuri_ipv4.txt"
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/us_dns_list.txt" -o "$TMP_DIR/us_dns_list.txt"
-curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" -o "$TMP_DIR/white_list.txt"
+curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Journalist-HK/Rules/main/white_list.txt" -o "$TMP_DIR/whitelist.txt"
 
 # 6.2 Loyalsoldier 规则集（GeoIP/GFW 列表）
 curl -sS -k -L "${GITHUB_PROXY_BOKI}https://raw.githubusercontent.com/Loyalsoldier/geoip/release/text/facebook.txt" -o "$TMP_DIR/facebook.txt"
