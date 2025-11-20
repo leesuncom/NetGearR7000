@@ -84,32 +84,32 @@ cert_key_file = '/etc/dnscrypt-proxy2/mosdns-key.pem'
 
 # 日志设置
 [query_log]
-  file = '/var/log/dnscrypt-query.log'
+  file = '/tmp/log/dnscrypt-query.log'
   format = 'tsv'
   ignored_qtypes = ['DNSKEY', 'NS', 'OPT']
 [nx_log]
-  file = '/var/log/dnscrypt-nxdomain.log'
+  file = '/tmp/log/dnscrypt-nxdomain.log'
   format = 'tsv'
 
 # 列表设置
 [blocked_names]
   blocked_names_file = 'dnscrypt-blacklist-domains.txt'
-  log_file = '/var/log/dnscrypt-blacklist-domains.log'
+  log_file = '/tmp/log/dnscrypt-blacklist-domains.log'
   log_format = 'tsv'
 
 [blocked_ips]
   blocked_ips_file = 'dnscrypt-blacklist-ips.txt'
-  log_file = '/var/log/dnscrypt-blacklist-ips.log'
+  log_file = '/tmp/log/dnscrypt-blacklist-ips.log'
   log_format = 'tsv'
 
 [allowed_names]
   allowed_names_file = 'dnscrypt-whitelist-domains.txt'
-  log_file = '/var/log/dnscrypt-whitelisted-domains.log'
+  log_file = '/tmp/log/dnscrypt-whitelisted-domains.log'
   log_format = 'tsv'
 
 [allowed_ips]
   allowed_ips_file = 'dnscrypt-whitelist-ips.txt'
-  log_file = '/var/log/dnscrypt-whitelisted-ips.log'
+  log_file = '/tmp/log/dnscrypt-whitelisted-ips.log'
   log_format = 'tsv'
 
 # 计划任务
