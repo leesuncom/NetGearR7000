@@ -12,8 +12,10 @@ TMP_DIR="/tmp/update-config"
 # MosDNS 工作目录（规则文件最终保存路径）
 MOSDNS_RULE_DIR="/etc/mosdns/rule"
 # 加速代理前缀（处理 GitHub 访问问题）
-GITHUB_PROXY="https://ghfast.top/"
-GITHUB_PROXY_BOKI="https://github.boki.moe/"
+# GITHUB_PROXY="https://ghfast.top/"
+# GITHUB_PROXY_BOKI="https://github.boki.moe/"
+GITHUB_PROXY_BOKI="https://gh-proxy.com/"
+GITHUB_PROXY="https://gh-proxy.com/"
 
 
 # -------------------------- 2. 初始化：创建临时目录 + 清理旧文件 --------------------------
