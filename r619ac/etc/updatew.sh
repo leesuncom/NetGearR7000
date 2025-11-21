@@ -56,10 +56,13 @@ curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/leesuncom/updat
   -o "$TMP_DIR/proxy-domain-list.conf" && sudo cp "$TMP_DIR/proxy-domain-list.conf" /etc/smartdns/domain-set/
 
 # 4.5 更新 广告过滤规则（Cats-Team 源）
-curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf" \
+curl -sS -k -L "https://adrules.top/smart-dns.conf" \
   -o "$TMP_DIR/address.conf" && sudo cp "$TMP_DIR/address.conf" /etc/smartdns/
 
-# 4.6 更新 反广告配置（anti-ad 官方源）
+# curl -sS -k -L "${GITHUB_PROXY}https://raw.githubusercontent.com/Cats-Team/AdRules/main/smart-dns.conf" \
+#   -o "$TMP_DIR/address.conf" && sudo cp "$TMP_DIR/address.conf" /etc/smartdns/
+
+# 4.6 更新 反广告补充规则配置（anti-ad 官方源）
 curl -sS -L "https://anti-ad.net/anti-ad-for-smartdns.conf" \
   -o "$TMP_DIR/anti-ad-smartdns.conf" && sudo cp "$TMP_DIR/anti-ad-smartdns.conf" /etc/smartdns/conf.d/
 
