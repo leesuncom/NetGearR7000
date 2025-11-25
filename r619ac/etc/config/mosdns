@@ -37,4 +37,5 @@ config mosdns 'config'
 	option reject_type65 '1'
 	option custom_local_dns '1'
 	list local_dns 'https://doh.pub/dns-query'
+	option apple_optimization '1'
 
