@@ -7,10 +7,10 @@ on:
     - cron: 50 00 * * MON
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: openwrt-24.10
-  # REPO_BRANCH: master
+  # REPO_BRANCH: openwrt-24.10
+  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
-  CONFIG_FILE: r619im-6.6-3.config
+  CONFIG_FILE: r619im-6.6-1.config
   DIY_P0_SH: r619im-part0.sh
   DIY_P1_SH: r619im-part1.sh
   DIY_P2_SH: r619im-part2.sh
