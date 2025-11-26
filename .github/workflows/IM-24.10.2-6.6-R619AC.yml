@@ -5,10 +5,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: 50 00 * * MON
-
 env:
   REPO_URL: https://github.com/immortalwrt/immortalwrt
-  REPO_BRANCH: master  # 若需切换 24.10 分支，直接改为 openwrt-24.10
+  # REPO_BRANCH: openwrt-24.10
+  REPO_BRANCH: master
   FEEDS_CONF: feeds.conf.default
   CONFIG_FILE: r619im-6.6-3.config
   DIY_P0_SH: r619im-part0.sh
@@ -24,8 +24,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write  # 用于上传 Release，避免权限不足
 
     steps:
     - name: Check Server Performance
@@ -47,56 +45,30 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        # 查看当前目录空间
         df -hT $PWD               
-        # 替换 apt-get -qq 为正常输出，避免隐藏错误
-        sudo -E apt-get update -y
-        # 执行 ImmortalWrt 官方依赖脚本（保留输出，便于排查失败）
-        sudo bash -c 'bash <(curl https://build-scripts.immortalwrt.org/init_build_environment.sh)' || {
-          echo "ERROR: 依赖安装脚本执行失败！"
-          exit 1
-        }
-        # 补充 kernel-headers 编译必需依赖（ImmortalWrt 脚本可能遗漏）
-        sudo -E apt-get install -y --no-install-recommends \
-          libiberty-dev libpci-dev libudev-dev python3-pip
-        # 清理缓存，释放空间
-        sudo -E apt-get autoremove --purge -y
-        sudo -E apt-get clean
-        # 设置时区
+        sudo -E apt-get -qq update
+        sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
-        # 递归授权工作目录（避免子目录权限问题）
         sudo mkdir -p /mnt/workdir
-        sudo chown -R $USER:$GROUPS /mnt/workdir
-        sudo chmod 755 /mnt/workdir
-        # 验证核心依赖是否安装成功
-        echo "=== 核心依赖验证 ==="
-        gcc --version || { echo "GCC 未安装！"; exit 1; }
-        make --version || { echo "Make 未安装！"; exit 1; }
-        python3 --version || { echo "Python3 未安装！"; exit 1; }
+        sudo chown $USER:$GROUPS /mnt/workdir
 
-    - name: Maximize disk space
+    - name: Combine Disks
       uses: easimon/maximize-build-space@master
       with:
-        swap-size-mb: 4096  # 增大交换分区（避免编译时内存不足）
-        temp-reserve-mb: 500  # 保留临时目录空间
-        root-reserve-mb: 2048  # 保留根目录空间（避免空间耗尽）
-        remove-dotnet: true  # 移除无用的 .NET（释放 ~2GB 空间）
-        remove-android: true  # 移除无用的 Android 工具（释放空间）
-
-    - name: Checkout custom configs/scripts
+        swap-size-mb: 1024
+        temp-reserve-mb: 100
+        root-reserve-mb: 1024
+        
+    - name: Checkout
       uses: actions/checkout@main
-      with:
-        path: custom  # 把用户的 config/脚本 检出到 custom 目录，避免与源码冲突
-
-    - name: Clone ImmortalWrt source code
+      
+    - name: Clone source code
       run: |
-        # 查看工作目录空间
         df -hT $GITHUB_WORKSPACE
-        # 克隆源码并更新子模块（避免源码缺失）
-        git clone --depth 1 $REPO_URL -b $REPO_BRANCH openwrt
+        git clone $REPO_URL -b $REPO_BRANCH openwrt
         cd openwrt
-        git submodule update --init --recursive  # 关键：拉取子模块（如工具链依赖）
-        # 输出源码信息到环境变量
         echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
         COMMIT_AUTHOR=$(git show -s --date=short --format="Commit Author: %an")
         echo "COMMIT_AUTHOR=$COMMIT_AUTHOR" >> $GITHUB_ENV
@@ -132,100 +104,63 @@ jobs:
         mixkey: r619-${{ env.REPO_BRANCH }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
         prefix: ${{ env.OPENWRT_PATH }}
 
-    - name: Load custom feeds & run DIY script 0
+    - name: Load custom feeds & run diy shell 0 before update feeds
       run: |
-        cd $OPENWRT_PATH
-        # 复制自定义 feeds.conf（若存在）
-        [ -f custom/$FEEDS_CONF ] && cp custom/$FEEDS_CONF feeds.conf.default
-        # 执行 DIY_P0_SH（先检查脚本是否存在且可执行）
-        if [ -f custom/$DIY_P0_SH ]; then
-          chmod +x custom/$DIY_P0_SH
-          custom/$DIY_P0_SH || { echo "DIY_P0_SH 执行失败！"; exit 1; }
-        else
-          echo "警告：未找到 $DIY_P0_SH，跳过该步骤"
-        fi
-        # 创建自定义文件目录并复制文件（避免目录不存在报错）
-        mkdir -p files/etc/{config,smartdns,opkg,crontabs,mydns}
-        SRC_DIR="custom/r619ac/etc"
-        if [ -d $SRC_DIR ]; then
-          cp -rfv $SRC_DIR/* files/etc/
-        else
-          echo "警告：未找到 $SRC_DIR，跳过文件复制"
-        fi
-        # 确保脚本权限
-        chmod 755 files/etc/updatew.sh 2>/dev/null || true
-        chmod 755 files/etc/mosdns/script/flush_cache.sh 2>/dev/null || true
-        chmod 755 files/etc/init.d/cert_bootstrap 2>/dev/null || true
+        [ -e $FEEDS_CONF ] && cp $FEEDS_CONF openwrt/feeds.conf.default
+        chmod +x $DIY_P0_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P0_SH
+        mkdir -p files/etc/config
+        mkdir -p files/etc/smartdns
+        mkdir -p files/etc/opkg
+        mkdir -p files/etc/crontabs
+        SRC_DIR="../r619ac/etc"
+        cp -rfv $SRC_DIR/* files/etc/ || true
+        chmod 755 files/etc/updatew.sh || true
+        chmod 755 files/etc/mosdns/script/flush_cache.sh
+        chmod 755 files/etc/init.d/cert_bootstrap
 
     - name: Update feeds
-      run: |
-        cd $OPENWRT_PATH
-        ./scripts/feeds update -a || { echo "Feeds 更新失败！"; exit 1; }
+      run: cd openwrt && ./scripts/feeds update -a
 
-    - name: Run DIY script 1 before install feeds
+    - name: Run diy shell 1 before install feeds
       run: |
-        cd $OPENWRT_PATH
-        if [ -f custom/$DIY_P1_SH ]; then
-          chmod +x custom/$DIY_P1_SH
-          custom/$DIY_P1_SH || { echo "DIY_P1_SH 执行失败！"; exit 1; }
-        else
-          echo "警告：未找到 $DIY_P1_SH，跳过该步骤"
-        fi
-
+        chmod +x $DIY_P1_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P1_SH
+        # wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+        
     - name: Install feeds
-      run: |
-        cd $OPENWRT_PATH
-        ./scripts/feeds install -a || { echo "Feeds 安装失败！"; exit 1; }
+      run: cd openwrt && ./scripts/feeds install -a
 
-    - name: Load custom config & run DIY script 2
+    - name: Load custom configuration & run diy shell 2 after install feeds
       run: |
-        cd $OPENWRT_PATH
-        # 复制自定义文件（若存在）
-        [ -d custom/files ] && cp -rf custom/files/* files/
-        # 重新加载配置文件（覆盖可能被 feeds 修改的配置）
-        cp custom/$CONFIG_FILE .config
-        # 执行 DIY_P2_SH
-        if [ -f custom/$DIY_P2_SH ]; then
-          chmod +x custom/$DIY_P2_SH
-          custom/$DIY_P2_SH || { echo "DIY_P2_SH 执行失败！"; exit 1; }
-        else
-          echo "警告：未找到 $DIY_P2_SH，跳过该步骤"
-        fi
-        # 生成最终配置（确保配置生效）
-        make defconfig || { echo "生成配置失败！"; exit 1; }
-
-    - name: Download packages (with integrity check)
+        [ -e files ] && mv files openwrt/files
+        [ -e $CONFIG_FILE ] && mv $CONFIG_FILE openwrt/.config
+        chmod +x $DIY_P2_SH
+        cd openwrt
+        $GITHUB_WORKSPACE/$DIY_P2_SH
+        # sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=IM-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
+        # wget -N https://raw.githubusercontent.com/leesuncom/NetGearR7000/refs/heads/main/default-settings/files/99-default-settings-chinese -P feeds/package/emortal/default-settings/files/99-default-settings-chinese
+        
+    - name: Download package
       id: package
       run: |
-        cd $OPENWRT_PATH
-        # 多线程下载包（加快速度）
-        make download -j$(nproc) || { echo "包下载失败！"; exit 1; }
-        # 检查并删除小于 1KB 的损坏包（避免编译时出错）
-        BROKEN_FILES=$(find dl -size -1024c)
-        if [ -n "$BROKEN_FILES" ]; then
-          echo "发现损坏的下载包："
-          ls -l $BROKEN_FILES
-          rm -f $BROKEN_FILES
-          echo "已删除损坏包，重新尝试下载..."
-          make download -j$(nproc) || { echo "重新下载失败！"; exit 1; }
-        fi
-        echo "包下载完成，无损坏文件"
+        cd openwrt
+        make defconfig
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
 
-    - name: Compile firmware (with fallback to verbose log)
+    - name: Compile the firmware
       id: compile
       run: |
-        cd $OPENWRT_PATH
-        CPU_CORES=$(nproc)
-        echo "使用 $CPU_CORES+1 线程编译..."
-        # 先尝试多线程编译，失败则单线程+详细日志（便于排查）
-        make -j $((CPU_CORES+1)) world || {
-          echo "多线程编译失败，切换到单线程详细日志模式..."
-          make -j1 V=s world  # 关键：失败后输出详细日志，定位 kernel-headers 问题
-        }
-        # 编译成功后提取设备名称
+        cd openwrt
+        echo -e "$(nproc) thread compile"
+        make -j $(($(nproc)+1)) world
         echo "status=success" >> $GITHUB_OUTPUT
-        DEVICE_NAME=$(grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' | head -n1)
-        [ -n "$DEVICE_NAME" ] && echo "DEVICE_NAME=_$DEVICE_NAME" >> $GITHUB_ENV || echo "DEVICE_NAME=_Unknown" >> $GITHUB_ENV
+        grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
+        [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_ENV
 
     - name: Check space usage
@@ -237,20 +172,16 @@ jobs:
       if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
       with:
         name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: ${{ env.OPENWRT_PATH }}/bin
-        retention-days: 3  # 保留 3 天，节省存储空间
+        path: openwrt/bin
 
-    - name: Organize firmware files
+    - name: Organize files
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
-        cd ${{ env.OPENWRT_PATH }}/bin/targets/*/*
-        rm -rf packages  # 移除冗余的 packages 目录，减小上传体积
+        cd openwrt/bin/targets/*/*
+        rm -rf packages
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "status=success" >> $GITHUB_OUTPUT
-        # 输出固件列表
-        echo "生成的固件文件："
-        ls -lh
 
     - name: Upload firmware directory
       uses: actions/upload-artifact@main
@@ -258,39 +189,17 @@ jobs:
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
-        retention-days: 7  # 固件保留 7 天
 
     - name: Generate release tag
       id: tag
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       run: |
-        RELEASE_TAG="IM-${{ env.REPO_BRANCH }}-${{ env.FIRMWARE_TAG }}$(date +"%Y.%m.%d-%H%M")"
-        echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
-        # 生成 Release 描述
-        cat > release.txt << EOF
-        ## 📦 ImmortalWrt Firmware for ${{ env.FIRMWARE_TAG }}
-        ### 🔧 固件信息
-        - 架构：${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.DEVICE_ARCH }}
-        - 源码：[${{ env.REPO_URL }}/tree/${{ env.REPO_BRANCH }}](${{ env.REPO_URL }}/tree/${{ env.REPO_BRANCH }})
-        - 分支：${{ env.REPO_BRANCH }}
-        - 内核：$(grep "CONFIG_LINUX_VERSION" ${{ env.OPENWRT_PATH }}/.config | awk -F '"' '{print $2}')
-        - 默认地址：192.168.1.1
-        - 默认账号：root/password
-        
-        ### 📝 源码提交信息
-        - ${{ env.COMMIT_AUTHOR }}
-        - ${{ env.COMMIT_DATE }}
-        - ${{ env.COMMIT_MESSAGE }}
-        - ${{ env.COMMIT_HASH }}
-        
-        ### ⚠️ 注意
-        1. 首次刷机请备份原配置
-        2. 若需保留配置，刷机时选择 "保留配置"（风险自担）
-        3. 插件功能请自行测试，不适配请反馈
-        EOF
+        echo "release_tag=IM-${{ env.REPO_BRANCH }}-$(date +"%Y.%m.%d-%H%M")" >> $GITHUB_OUTPUT
+        touch release.txt
+        [ ${UPLOAD_GOFILE} = true && ${{ steps.gofile.outputs.url }} ] && echo "🔗 [GoFile](${{ steps.gofile.outputs.url }})" >> release.txt
         echo "status=success" >> $GITHUB_OUTPUT
 
-    - name: Upload firmware to Release
+    - name: Upload firmware to release
       uses: softprops/action-gh-release@master
       if: steps.tag.outputs.status == 'success' && !cancelled()
       env:
@@ -298,11 +207,25 @@ jobs:
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         files: ${{ env.FIRMWARE }}/*
-        body_path: release.txt
-        draft: false
-        prerelease: false
+        body: |
+          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
+          ### 📒 Firmware Info.
+          - 💻 Platform Arch: ${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.DEVICE_ARCH }}
+          - ⚽ Firmware Code: ${{ env.REPO_URL }}
+          - 💝 Branch: ${{ env.REPO_BRANCH }}
+          - 🚀 Kernel: immortalwrt6.6
+          - 🌐 Default Address: 192.168.1.1
+          - 🔑 Default Password: root/password
+          ### 🚀 Included Mods
+          ### 🧊 Firmware Version
+          - The last update record before firmware compilation
+          - Repo URL: [${{ env.REPO_URL }}/tree/${{ env.REPO_BRANCH }}](${{ env.REPO_URL }}/tree/${{ env.REPO_BRANCH }})
+          - ${{ env.COMMIT_AUTHOR }}
+          - ${{ env.COMMIT_DATE }}
+          - ${{ env.COMMIT_MESSAGE }}
+          - ${{ env.COMMIT_HASH }}
 
-    - name: Delete old workflow runs
+    - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@main
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -317,3 +240,4 @@ jobs:
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
