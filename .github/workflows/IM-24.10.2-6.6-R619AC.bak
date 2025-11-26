@@ -66,9 +66,11 @@ jobs:
     - name: Combine Disks
       uses: easimon/maximize-build-space@master
       with:
-        swap-size-mb: 1024
-        temp-reserve-mb: 100
-        root-reserve-mb: 1024
+        swap-size-mb: 4096  # 增大交换分区（避免编译时内存不足）
+        temp-reserve-mb: 500  # 保留临时目录空间
+        root-reserve-mb: 2048  # 保留根目录空间（避免空间耗尽）
+        remove-dotnet: true  # 移除无用的 .NET（释放 ~2GB 空间）
+        remove-android: true  # 移除无用的 Android 工具（释放空间）
         
     - name: Checkout
       uses: actions/checkout@main
