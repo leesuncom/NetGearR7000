@@ -107,26 +107,22 @@ jobs:
         COMMIT_HASH=$(git show -s --date=short --format="Hash: %H")
         echo "COMMIT_HASH=$COMMIT_HASH" >> $GITHUB_ENV
 
-    - name: Generate build variables
+    - name: Generate Variables
       run: |
-        # 复制用户配置文件到源码目录
-        cp custom/$CONFIG_FILE $OPENWRT_PATH/.config
+        cp $CONFIG_FILE $OPENWRT_PATH/.config
         cd $OPENWRT_PATH
-        # 提取设备信息
         SOURCE_REPO="$(echo $REPO_URL | awk -F '/' '{print $(NF)}')"
         echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
-        DEVICE_TARGET=$(grep -m1 "CONFIG_TARGET_BOARD" .config | awk -F '"' '{print $2}')
+        DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
         echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
-        DEVICE_SUBTARGET=$(grep -m1 "CONFIG_TARGET_SUBTARGET" .config | awk -F '"' '{print $2}')
+        DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
         echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
-        DEVICE_ARCH=$(grep -m1 "CONFIG_TARGET_ARCH_PACKAGES" .config | awk -F '"' '{print $2}')
+        DEVICE_ARCH=$(cat .config | grep CONFIG_TARGET_ARCH_PACKAGES | awk -F '"' '{print $2}')
         echo "DEVICE_ARCH=$DEVICE_ARCH" >> $GITHUB_ENV
-        # 验证配置文件有效性
-        if ! grep -q "CONFIG_LINUX_VERSION" .config; then
-          echo "ERROR: 配置文件无效，未找到内核版本信息！"
-          exit 1
-        fi
-        echo "内核版本: $(grep "CONFIG_LINUX_VERSION" .config | awk -F '"' '{print $2}')"
+        
+        # 验证修改
+        echo "Modified IMG_PREFIX definition:"
+        grep '^IMG_PREFIX\:' include/image.mk
 
     - name: Cache Toolchain
       if: env.CACHE_TOOLCHAIN == 'true'
