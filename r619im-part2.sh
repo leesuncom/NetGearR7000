@@ -39,7 +39,7 @@ wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/go
 
 # 移除jool包
 rm -rf package/feeds/packages/jool
-
+sed -i 's|+luci-app-attendedsysupgrade||g' feeds/luci/collections/luci/Makefile
 
 # sed -i "s/odhcp6c/#odhcp6c/" include/target.mk
 # sed -i "s/odhcpd-ipv6only/#odhcpd-ipv6only/" include/target.mk
