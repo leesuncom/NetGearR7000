@@ -36,5 +36,5 @@ config mosdns 'config'
 	list stream_media_dns 'tls://8.8.8.8'
 	option geoip_type 'geoip'
 	option github_proxy 'https://gh-proxy.com'
-	list local_dns '119.29.29.29'
+	list local_dns '223.5.5.5'
 
