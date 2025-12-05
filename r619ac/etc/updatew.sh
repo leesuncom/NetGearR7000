@@ -127,13 +127,13 @@ echo "  ✅ 所有目标目录准备完成"
 
 # -------------------------- 核心功能：更新各组件配置 --------------------------
 # [2/6] 更新系统 Hosts
-echo -e "\n[2/6] 更新系统 Hosts 文件..."
-sudo sed -i '/# ING Hosts Start/,/# ING Hosts End/d' /etc/hosts
-download_file "${GITHUB_PROXY}raw.githubusercontent.com/shidahuilang/hosts/main/hosts" \
-  "$TMP_DIR/new-hosts.txt" "系统 Hosts 规则"
-cat "$TMP_DIR/new-hosts.txt" | sort -u | sudo tee -a /etc/hosts
-rm -f "$TMP_DIR/new-hosts.txt"  # 及时清理，释放空间
-echo "  ✅ Hosts 更新完成"
+# echo -e "\n[2/6] 更新系统 Hosts 文件..."
+# sudo sed -i '/# ING Hosts Start/,/# ING Hosts End/d' /etc/hosts
+# download_file "${GITHUB_PROXY}raw.githubusercontent.com/shidahuilang/hosts/main/hosts" \
+#   "$TMP_DIR/new-hosts.txt" "系统 Hosts 规则"
+# cat "$TMP_DIR/new-hosts.txt" | sort -u | sudo tee -a /etc/hosts
+# rm -f "$TMP_DIR/new-hosts.txt"  # 及时清理，释放空间
+# echo "  ✅ Hosts 更新完成"
 
 # [3/6] 更新 SmartDNS 规则（用管道传递列表，避免临时文件解析错误）
 echo -e "\n[3/6] 更新 SmartDNS 规则..."
