@@ -20,18 +20,7 @@ config device
 config interface 'lan'
 	option device 'br-lan'
 	option proto 'static'
-	list ipaddr '192.168.1.1/24'
-	option ip6assign '60'
-
-config interface 'wan'
-	option device 'wan'
-	option proto 'pppoe'
-	option username '17371063072'
-	option password '134013'
-	option ipv6 'auto'
-	option norelease '1'
-
-config interface 'wan6'
-	option device 'wan'
-	option proto 'dhcpv6'
+	list ipaddr '10.0.0.2/24'
+	option gateway '10.0.0.1'
+	list dns '127.0.0.1'
 

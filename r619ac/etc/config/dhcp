@@ -21,7 +21,7 @@ config dnsmasq
 	option ignore_hosts_dir '1'
 	option nohosts '1'
 	option filter_aaaa '1'
-	option dns_redirect '1'
+	list interface 'lan'
 	list server '127.0.0.1#7755'
 
 config dhcp 'lan'
@@ -30,14 +30,6 @@ config dhcp 'lan'
 	option limit '150'
 	option leasetime '12h'
 	option dhcpv4 'server'
-	option dhcpv6 'disabled'
-	option ra 'server'
-	option ra_slaac '1'
-	option max_preferred_lifetime '2700'
-	option max_valid_lifetime '5400'
-
-config dhcp 'wan'
-	option interface 'wan'
 	option ignore '1'
 
 config odhcpd 'odhcpd'
