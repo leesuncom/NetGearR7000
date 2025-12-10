@@ -214,4 +214,5 @@ jobs:
       with:
         keep_latest: 7
         delete_tags: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
