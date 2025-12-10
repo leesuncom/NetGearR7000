@@ -206,7 +206,7 @@ jobs:
       with:
         retain_days: 7
         keep_minimum_runs: 7
-        token: ${{ env.GITHUB_TOKEN }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: 删除自动发布的旧固件
       uses: dev-drprasad/delete-older-releases@master
@@ -214,3 +214,4 @@ jobs:
       with:
         keep_latest: 7
         delete_tags: true
+        token: ${{ secrets.GITHUB_TOKEN }}
