@@ -10,6 +10,16 @@
 # Description: OpenWrt DIY script part 2 (After Update feeds)
 #
 
+
+# replace MOSdns to lastest update
+rm -rf feeds/smpackage/luci-app-mosdns
+rm -rf feeds/smpackage/mosdns
+rm -rf feeds/luci/applications/luci-app-mosdns
+rm -rf feeds/packages/utils/v2dat
+rm -rf feeds/packages/net/v2ray-geodata
+git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+
 # Modify default IP
 sed -i 's/192.168.1.1/10.0.0.2/g' package/base-files/files/bin/config_generate
 # Modify default THEME
