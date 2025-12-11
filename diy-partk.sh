@@ -25,6 +25,7 @@ sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=K-10.0.0.2-$(shell TZ=UTC-8 date +"%Y.%m
 
 # Modify hostname
 sed -i 's/ImmortalWrt/KR619AC/g' package/base-files/files/bin/config_generate
+sed -i 's/LEDE/LR619AC/g' package/base-files/files/bin/config_generate
 
 # Modify default IP
 sed -i 's/192.168.1.1/10.0.0.2/g' package/base-files/files/bin/config_generate
