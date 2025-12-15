@@ -6,28 +6,22 @@ config interface 'loopback'
 	option netmask '255.0.0.0'
 
 config globals 'globals'
-	option ula_prefix 'fdf9:c044:b090::/48'
+	option ula_prefix 'fd06:d7d2:106c::/48'
+	option packet_steering '1'
 
 config device
 	option name 'br-lan'
 	option type 'bridge'
-	list ports 'eth0'
+	list ports 'lan1'
+	list ports 'lan2'
+	list ports 'lan3'
+	list ports 'lan4'
 
 config interface 'lan'
 	option device 'br-lan'
 	option proto 'static'
-	option ipaddr '10.0.0.2'
+	option ipaddr '192.168.2.2'
 	option netmask '255.255.255.0'
-	option gateway '10.0.0.1'
+	option gateway '192.168.2.1'
 	list dns '127.0.0.1'
-
-config switch
-	option name 'switch0'
-	option reset '1'
-	option enable_vlan '1'
-
-config switch_vlan
-	option device 'switch0'
-	option vlan '1'
-	option ports '1 2 3 4 0'
 
