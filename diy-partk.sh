@@ -21,14 +21,14 @@ git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
 git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
 
 # 发布固件名称添加日期
-sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=K-192.168.2.2-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
+sed -i 's|^IMG_PREFIX\:\=.*|IMG_PREFIX:=K-192.168.1.2-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))|g' include/image.mk
 
 # Modify hostname
 # sed -i 's/ImmortalWrt/KR619AC/g' package/base-files/files/bin/config_generate
 # sed -i 's/LEDE/LR619AC/g' package/base-files/files/bin/config_generate
 
 # Modify default IP
-sed -i 's/192.168.1.1/192.168.2.2/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
 
 # Modify default THEME
 #  sed -i 's/luci-theme-bootstrap/luci-theme-argonv3/g' ./feeds/luci/collections/luci/Makefile
