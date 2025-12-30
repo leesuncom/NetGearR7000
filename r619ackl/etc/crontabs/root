@@ -1,2 +1,0 @@
-0 1 * * * /etc/updatew.sh  > /tmp/update-log.txt 2>&1
-0 2 * * * /usr/share/mosdns/mosdns.sh geodata
