@@ -63,6 +63,16 @@ jobs:
         echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER}" >> $GITHUB_ENV
         sed -i "1a REPO_TOKEN=${{ secrets.REPO_X86 }}" ${{ github.workspace }}/devices/common/diy.sh
         sed -i "1a TARGET=${{matrix.target}}" ${{ github.workspace }}/devices/common/diy.sh
+        # 仅针对x86_64目标设置MTARGET环境变量
+        if [[ ${{ matrix.target }} == "x86_64" ]]; then
+           # 为x86_64架构赋值MTARGET
+           echo "MTARGET=x86_64" >> $GITHUB_ENV
+        else
+           # 非x86_64目标输出警告提示
+           echo "Warning: Current target ${{ matrix.target }} is not x86_64 architecture, MTARGET not set"
+           # 若需严格限制仅x86_64运行，取消下方注释即可（非x86_64直接终止流程）
+           # exit 1
+        fi
 
     - name: Trigger Packages Update
       continue-on-error: true
