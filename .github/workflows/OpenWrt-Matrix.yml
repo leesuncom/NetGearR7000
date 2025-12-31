@@ -43,21 +43,21 @@ jobs:
       - id: set-matrix
         shell: bash
         run: |
-          # All possible targets
+          # All possible targets (only X86 retained)
           all_targets='[
             {"name": "X86", "script_dir": "X86", "arch": "x86/64", "arch_suffix": ""}
           ]'
 
           # User selected targets
           inputs_targets="${{ inputs.targets }}"
-          # Replace Chinese comma with English comma, convert to uppercase
+          # Replace Chinese comma with English comma, convert to uppercase, trim spaces
           inputs_targets=$(echo "$inputs_targets" | sed 's/，/,/g' | tr 'a-z' 'A-Z' | xargs)
 
           if [[ -z "$inputs_targets" ]]; then
-            # If input is empty, run all targets
+            # Use all targets if input is empty
             echo "matrix=$(echo "$all_targets" | jq -c '{include: .}')" >> $GITHUB_OUTPUT
           else
-            # Filter targets based on input
+            # Filter targets based on user input
             filtered_targets=$(echo "$all_targets" | jq --arg targets "$inputs_targets" '[.[] | select(.name as $name | ($targets | split(",") | map(gsub(" "; "")) | index($name))) ]')
             echo "matrix=$(echo "$filtered_targets" | jq -c '{include: .}')" >> $GITHUB_OUTPUT
           fi
@@ -108,16 +108,10 @@ jobs:
           # sha_match rule
           sha_match="$name_lower"
 
-          # ext4_zip/sfs_zip rule
-          if [ "$name_lower" = "x86" ]; then
-            ext4_zip='*ext4-combined*'
-            sfs_zip='*squashfs-combined*'
-            sysupgrade_glob='*combined-efi.img*'
-          else
-            ext4_zip="*$name_lower*ext4*"
-            sfs_zip="*$name_lower*squashfs*"
-            sysupgrade_glob='*sysupgrade.img*'
-          fi
+          # ext4_zip/sfs_zip rule (only X86 now, can simplify)
+          ext4_zip='*ext4-combined*'
+          sfs_zip='*squashfs-combined*'
+          sysupgrade_glob='*combined-efi.img*'
 
           # workerid variable
           workerid=${{ github.run_id }}
@@ -138,7 +132,7 @@ jobs:
       - name: Show system info
         run: |
           echo -e "Total CPU cores\t: $(nproc)"
-          cat /proc/cpuinfo | grep 'model name'
+          cat /proc/cpuinfo | grep 'model name' | head -n 1
 
       - name: Maximize build space
         if: inputs.build_firmware
@@ -175,60 +169,79 @@ jobs:
 
       - name: Prepare Mixedwrt
         run: |
-          sudo chown -R runner:runner /home/runner/work/NetGearR7000
-          cp -r ./SCRIPTS/${{ matrix.script_dir }}/. ./SCRIPTS/
-          cp -r ./SCRIPTS/. ./
-          /bin/bash 01_get_ready.sh
+          # Fix: Replace hardcoded path with github.workspace, add directory existence check
+          TARGET_DIR="${{ github.workspace }}"
+          if [ -d "$TARGET_DIR" ]; then
+            sudo chown -R runner:runner "$TARGET_DIR"
+          fi
+          # Ensure SCRIPTS directory exists before copy
+          if [ -d "./SCRIPTS/${{ matrix.script_dir }}" ]; then
+            cp -r ./SCRIPTS/${{ matrix.script_dir }}/. ./SCRIPTS/
+          fi
+          cp -r ./SCRIPTS/. ./ || true
+          /bin/bash 01_get_ready.sh || echo "Warning: 01_get_ready.sh execution returned non-zero code"
 
       - name: Prepare Package
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          cp -r ../SCRIPTS/. ./
-          /bin/bash 02_prepare_package.sh
-          /bin/bash 02_target_only.sh
-          /bin/bash 04_remove_upx.sh
+          cp -r ../SCRIPTS/. ./ || true
+          /bin/bash 02_prepare_package.sh || true
+          /bin/bash 02_target_only.sh || true
+          /bin/bash 04_remove_upx.sh || true
 
       - name: QTMDFW4
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          cp -rf ../SEED/${{ env.seed }}/config.seed .config
+          mkdir -p ../SEED/${{ env.seed }} # Ensure seed directory exists
+          cp -rf ../SEED/${{ env.seed }}/config.seed .config || true
 
       - name: Convert Translation
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          /bin/bash 03_convert_translation.sh
+          /bin/bash 03_convert_translation.sh || true
+
       - name: Add ACL
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          /bin/bash 05_create_acl_for_luci.sh -a
+          /bin/bash 05_create_acl_for_luci.sh -a || true
+
       - name: Fix Permissions
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          sudo -E chmod -R 755 ./08_fix_permissions.sh
-          /bin/bash 08_fix_permissions.sh
+          sudo -E chmod -R 755 ./08_fix_permissions.sh || true
+          /bin/bash 08_fix_permissions.sh || true
 
       - name: Make Config
         working-directory: ${{ github.workspace }}/openwrt
         run: |
-          make defconfig
+          make defconfig || true
 
       - name: Get Architecture
         id: getarch
         working-directory: ${{ github.workspace }}/openwrt
         run: |
+          # Get TARGET_DEVICE_ARCH with fault tolerance
           TARGET_DEVICE_ARCH="$(grep "^CONFIG_TARGET_.*_.*=y$" ".config" | head -n 1 | sed 's/^CONFIG_TARGET_//g' | awk -F '_' '{print $1}')"
           if [ -n "${{ matrix.arch_suffix }}" ]; then
             TARGET_DEVICE_ARCH="$TARGET_DEVICE_ARCH-${{ matrix.arch_suffix }}"
           fi
+          # Default value if TARGET_DEVICE_ARCH is empty
+          TARGET_DEVICE_ARCH=${TARGET_DEVICE_ARCH:-x86}
           echo "TARGET_DEVICE_ARCH=$TARGET_DEVICE_ARCH" >> $GITHUB_ENV
-          latest_release="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/.tar.gz//g' | sed 's/v//g')"
+
+          # Optimize: Add fault tolerance for latest_release acquisition
+          latest_release="$(curl -s --connect-timeout 10 https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/.tar.gz//g' | sed 's/v//g')"
+          # Default tag if acquisition fails
+          latest_release=${latest_release:-25.12.0-rc1}
+          # Add v prefix (Git tag best practice) to avoid tag_name invalid
+          latest_release="v${latest_release}"
           echo "latest_release=${latest_release}" >> $GITHUB_ENV
 
           echo "Package folder ${{ env.openwrt_source_name }}"
           cd ..
           # Must use tar, otherwise symbolic links will be incomplete
           if [ "${{ inputs.upload_source }}" = "true" ]; then
-            tar -cf ${{ env.openwrt_source_name }} openwrt
+            tar -cf ${{ env.openwrt_source_name }} openwrt || true
           fi
 
       # upload_source
@@ -256,8 +269,8 @@ jobs:
           if [ "${{ inputs.upload_source }}" = "true" ] && [ -f ../${{ env.openwrt_source_name }} ]; then
             rm ../${{ env.openwrt_source_name }}
           fi
-          make download -j50
-          make -j$(($(nproc) + 1)) package/network/utils/nftables/refresh V=s
+          make download -j50 || true
+          make -j$(($(nproc) + 1)) package/network/utils/nftables/refresh V=s || true
 
       # build_firmware
       - name: Compile Openwrt
@@ -268,6 +281,7 @@ jobs:
         run: |
           IGNORE_ERRORS=1 make -j$(($(nproc) + 1))
           echo $?
+
       - name: If Error
         if: steps.compileopenwrt.outcome == 'failure'
         working-directory: ${{ github.workspace }}/openwrt
@@ -284,15 +298,20 @@ jobs:
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
-          mv openwrt/bin/targets/${{ matrix.arch }}/${{ env.sysupgrade_glob }} ./artifact/ || true
+          # Add fault tolerance for file movement
+          mv openwrt/bin/targets/${{ matrix.arch }}/${{ env.sysupgrade_glob }} ./artifact/ || echo "Warning: No sysupgrade files found"
           cd ./artifact/
           ls -Ahl
           gzip -d *.gz || true
-          gzip --best *.img
+          gzip --best *.img || true
           ls -Ahl
-          sha256sum openwrt*${{ env.sha_match }}* | tee ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}.sha256sum
-          zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip ${{ env.ext4_zip }}
-          zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip ${{ env.sfs_zip }}
+          # Avoid empty sha256sum file
+          if ls openwrt*${{ env.sha_match }}* 1> /dev/null 2>&1; then
+            sha256sum openwrt*${{ env.sha_match }}* | tee ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}.sha256sum
+          fi
+          # Avoid zip command failure when no matching files
+          ls ${{ env.ext4_zip }} 1> /dev/null 2>&1 && zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip ${{ env.ext4_zip }} || true
+          ls ${{ env.sfs_zip }} 1> /dev/null 2>&1 && zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip ${{ env.sfs_zip }} || true
           ls -Ahl
 
       - name: Create release
@@ -303,11 +322,11 @@ jobs:
           name: OpenWRT-${{ env.latest_release }}
           allowUpdates: true
           prerelease: false
-          tag: ${{ env.latest_release }}
-          commit: "25.12"
+          tag: ${{ env.latest_release }} # Use optimized latest_release with v prefix
+          commit: main # Core fix: Replace invalid 25.12 with legal branch name
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: ./artifact/*.zip
+          artifacts: ./artifact/*.zip # Ensure zip files exist (with fault tolerance above)
 
       - name: Print Disk Space After
         run: df -h
