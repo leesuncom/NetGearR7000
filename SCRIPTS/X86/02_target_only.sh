@@ -1,5 +1,5 @@
 #!/bin/bash
-sed -i "s/192.168.1/10.0.0.253/" package/base-files/files/bin/config_generate
+sed -i "s/192.168.1/10.0.0.2/" package/base-files/files/bin/config_generate
 sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
 sed -i 's/O2/O2 -march=x86-64-v2/g' include/target.mk
