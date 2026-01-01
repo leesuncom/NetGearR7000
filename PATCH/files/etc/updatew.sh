@@ -221,9 +221,9 @@ echo "  ✅ MosDNS 规则更新完成"
 
 # [6/6] 重启服务 + 清理收尾（无sudo）
 echo -e "\n[6/6] 重启服务并清理..."
-restart_service "dnscrypt-proxy"
-restart_service "mosdns"
-restart_service "smartdns"
+/etc/init.d/dnscrypt-proxy restart
+/etc/init.d/mosdns restart
+/etc/init.d/smartdns restart
 
 # 最终清理
 rm -rf "$TMP_DIR"
