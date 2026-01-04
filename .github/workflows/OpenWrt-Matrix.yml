@@ -317,13 +317,6 @@ jobs:
           ls ${{ env.sfs_zip }} 1> /dev/null 2>&1 && zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip ${{ env.sfs_zip }} || true
           ls -Ahl
 
-      - name: Upload firmware directory
-        uses: actions/upload-artifact@main
-        if: steps.organize.outputs.status == 'success' && !cancelled()
-        with:
-          name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-          path: ${{ env.FIRMWARE }}
-
       - name: Create release
         if: inputs.build_firmware
         id: create_release
