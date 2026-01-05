@@ -57,7 +57,13 @@ while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
 	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/kiddin9/kwrt-packages/actions/runs" | jq -r '.workflow_runs[0].status')
 done
 
-wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+# 更换 golang 版本
+rm -rf ./feeds/packages/lang/golang
+#cp -rf ../lede_pkg_ma/lang/golang ./feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
+# rust
+wget https://github.com/rust-lang/rust/commit/e8d97f0.patch -O feeds/packages/lang/rust/patches/e8d97f0.patch
+# wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
