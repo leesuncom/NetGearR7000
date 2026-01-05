@@ -23,7 +23,7 @@ sed -i -e '$a /etc/bench.log' \
 sed -i -e '/^\/etc\/profile/d' \
         -e '/^\/etc\/shinit/d' \
         package/base-files/Makefile
-sed -i "s/192.168.1/10.0.0.2/" package/base-files/files/bin/config_generate
+sed -i "s/192.168.1/10.0.0/" package/base-files/files/bin/config_generate
 
 sed -i "s#false; \\\#true; \\\#" include/download.mk
 
@@ -39,9 +39,9 @@ git_clone_path openwrt-25.12 https://github.com/immortalwrt/immortalwrt package/
 
 echo "$(date +"%s")" >version.date
 sed -i '/$(curdir)\/compile:/c\$(curdir)/compile: package/opkg/host/compile' package/Makefile
-sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-firewall luci-app-package-manager luci-app-upnp \
+sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-advancedplus luci-app-firewall luci-app-package-manager luci-app-upnp luci-app-syscontrol luci-proto-wireguard \
 luci-app-wizard luci-base luci-compat luci-lib-ipkg luci-lib-fs \
-coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig /" include/target.mk
+coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash openssh-sftp-server block-mount resolveip ds-lite swconfig luci-app-fan luci-app-filemanager /" include/target.mk
 
 sed -i "s/procd-ujail//" include/target.mk
 
@@ -57,13 +57,20 @@ while [[ "$status" == "in_progress" || "$status" == "queued" ]];do
 	status=$(curl -H "Authorization: token $REPO_TOKEN" -s "https://api.github.com/repos/kiddin9/kwrt-packages/actions/runs" | jq -r '.workflow_runs[0].status')
 done
 
+
+
+
 # 更换 golang 版本
 rm -rf ./feeds/packages/lang/golang
 #cp -rf ../lede_pkg_ma/lang/golang ./feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
 # rust
 wget https://github.com/rust-lang/rust/commit/e8d97f0.patch -O feeds/packages/lang/rust/patches/e8d97f0.patch
-# wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
+
+
+
+
+wget -N https://raw.githubusercontent.com/openwrt/packages/master/lang/golang/golang/Makefile -P feeds/packages/lang/golang/golang/
 
 #sed -i "/call Build\/check-size,\$\$(KERNEL_SIZE)/d" include/image.mk
 
@@ -79,7 +86,7 @@ sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/
 
 date=`date +%m.%d.%Y`
 sed -i -e "/\(# \)\?REVISION:=/c\REVISION:=$date" -e '/VERSION_CODE:=/c\VERSION_CODE:=$(REVISION)' include/version.mk
-sed -i 's/--set=llvm\.download-ci-llvm=true/--set=llvm.download-ci-llvm=false/' feeds/packages/lang/rust/Makefile
+
 sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
 sed -i 's#20) \* 1000#60) \* 1000#g' feeds/luci/modules/luci-base/htdocs/luci-static/resources/rpc.js
 

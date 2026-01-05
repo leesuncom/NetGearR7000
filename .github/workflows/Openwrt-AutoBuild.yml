@@ -10,13 +10,6 @@ name: Build OpenWrt
 
 on: 
   repository_dispatch:
-  # 可选：添加手动触发，方便调试
-  workflow_dispatch:
-    inputs:
-      target:
-        description: 'Target platform (e.g. x86_64)'
-        required: true
-        default: 'x86_64'
 
 env:
   REPO_TOKEN: ${{ secrets.REPO_X86 }}
@@ -33,18 +26,23 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     name: Build ${{matrix.target}}
     strategy:
       fail-fast: false
       matrix:
-        # 优化：添加容错，避免client_payload.target为空导致矩阵无效
-        target: ["${{ github.event.inputs.target || github.event.client_payload.target || 'x86_64' }}"]
+        target: ["${{ github.event.client_payload.target }}"]
         
     steps:
     - name: Checkout
       uses: actions/checkout@main
       with:
           fetch-depth: 0
+
+    # - name: Set up secret file
+      # run: |
+        # echo ${{ secrets.TELEGRAM_CHAT_ID }} | sed 's/./& /g'
+        # echo ${{ secrets.TELEGRAM_TOKEN }} | sed 's/./& /g'
 
     - name: Load Settings.ini
       run: |
@@ -53,18 +51,16 @@ jobs:
         if [ -f "devices/${{matrix.target}}/settings.ini" ]; then
           source "${{ github.workspace }}/devices/${{matrix.target}}/settings.ini"
         fi
-        # 导出配置到环境变量
-        echo "REPO_URL=${REPO_URL:-https://github.com/openwrt/openwrt}" >> $GITHUB_ENV
-        echo "REPO_BRANCH=${REPO_BRANCH:-openwrt-25.12}" >> $GITHUB_ENV
-        echo "CONFIG_FILE=${CONFIG_FILE:-config.seed}" >> $GITHUB_ENV
-        echo "DIY_SH=${DIY_SH:-diy.sh}" >> $GITHUB_ENV
-        echo "FREE_UP_DISK=${FREE_UP_DISK:-true}" >> $GITHUB_ENV
-        echo "UPLOAD_BIN_DIR_FOR_ARTIFACT=${UPLOAD_BIN_DIR_FOR_ARTIFACT:-false}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_FOR_ARTIFACT=${UPLOAD_FIRMWARE_FOR_ARTIFACT:-true}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_FOR_RELEASE=${UPLOAD_FIRMWARE_FOR_RELEASE:-true}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_TO_COWTRANSFER=${UPLOAD_FIRMWARE_TO_COWTRANSFER:-false}" >> $GITHUB_ENV
-        echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER:-false}" >> $GITHUB_ENV
-        # 插入REPO_TOKEN和TARGET到diy.sh
+        echo "REPO_URL=${REPO_URL}" >> $GITHUB_ENV
+        echo "REPO_BRANCH=${REPO_BRANCH}" >> $GITHUB_ENV
+        echo "CONFIG_FILE=${CONFIG_FILE}" >> $GITHUB_ENV
+        echo "DIY_SH=${DIY_SH}" >> $GITHUB_ENV
+        echo "FREE_UP_DISK=${FREE_UP_DISK}" >> $GITHUB_ENV
+        echo "UPLOAD_BIN_DIR_FOR_ARTIFACT=${UPLOAD_BIN_DIR_FOR_ARTIFACT}" >> $GITHUB_ENV
+        echo "UPLOAD_FIRMWARE_FOR_ARTIFACT=${UPLOAD_FIRMWARE_FOR_ARTIFACT}" >> $GITHUB_ENV
+        echo "UPLOAD_FIRMWARE_FOR_RELEASE=${UPLOAD_FIRMWARE_FOR_RELEASE}" >> $GITHUB_ENV
+        echo "UPLOAD_FIRMWARE_TO_COWTRANSFER=${UPLOAD_FIRMWARE_TO_COWTRANSFER}" >> $GITHUB_ENV
+        echo "UPLOAD_FIRMWARE_TO_WETRANSFER=${UPLOAD_FIRMWARE_TO_WETRANSFER}" >> $GITHUB_ENV
         sed -i "1a REPO_TOKEN=${{ secrets.REPO_X86 }}" ${{ github.workspace }}/devices/common/diy.sh
         sed -i "1a TARGET=${{matrix.target}}" ${{ github.workspace }}/devices/common/diy.sh
 
@@ -77,7 +73,7 @@ jobs:
           curl -X POST https://api.github.com/repos/kiddin9/kwrt-packages/dispatches \
             -H "Accept: application/vnd.github.everest-preview+json" \
             -H "Authorization: token ${{ secrets.REPO_X86 }}" \
-            --data '{"event_type": "update"}'
+          --data '{"event_type": "update"}'
         fi
 
     - name: Free disk space
@@ -177,7 +173,7 @@ jobs:
           git sparse-checkout set $@
           [[ "$mv" != "mv" ]] && cp -rn ./* $rootdir/ || mv -n $@/* $rootdir/$@/
           cd $rootdir
-        }
+          }
         export -f git_clone_path
         cp -rf devices/common/. openwrt/
         cp -rf devices/${{matrix.target}}/. openwrt/
@@ -196,27 +192,6 @@ jobs:
           /bin/bash "devices/${{matrix.target}}/$DIY_SH"
         fi
         cp -Rf ./diy/* ./ || true
-        chmod 755 ./package/base-files/files/etc/updatew.sh || true
-        chmod 755 ./package/base-files/files/etc/mosdns/script/flush_cache.sh
-        chmod 755 ./package/base-files/files/etc/init.d/cert_bootstrap
-
-    # 新增：修复rust编译失败问题（解决你之前的llvm.download-ci-llvm报错）
-    - name: Fix rust llvm config for CI environment
-      working-directory: ${{ github.workspace }}/openwrt
-      run: |
-        # 定位rust配置文件
-        RUST_CONFIG_DIR="feeds/packages/lang/rust"
-        mkdir -p $RUST_CONFIG_DIR
-        RUST_CONFIG_PATH="$RUST_CONFIG_DIR/config.toml"
-        # 修改或添加llvm.download-ci-llvm配置
-        if [ -f "$RUST_CONFIG_PATH" ]; then
-          sed -i 's/llvm.download-ci-llvm = true/llvm.download-ci-llvm = "if-unchanged"/g' "$RUST_CONFIG_PATH"
-        else
-          echo 'llvm.download-ci-llvm = "if-unchanged"' >> "$RUST_CONFIG_PATH"
-        fi
-        # 可选：禁用rust（若无需rust功能，取消下方注释）
-        # sed -i '/CONFIG_PACKAGE_rust/d' .config
-        # echo "CONFIG_PACKAGE_rust=n" >> .config
 
     - name: Apply patches
       run: |
@@ -227,13 +202,6 @@ jobs:
           fi
           find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.revert.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -R -B --merge -p1 --forward"
           find "devices/${{matrix.target}}/patches" -maxdepth 1 -type f -name '*.patch' ! -name '*.revert.patch' ! -name '*.bin.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d './' -B --merge -p1 --forward"
-        # 优化：x86架构清理无用无线驱动
-        if [[ ${{ matrix.target }} =~ x86_* ]]; then
-          sed -i '/CONFIG_WIRELESS/d' .config
-          sed -i '/CONFIG_PACKAGE_kmod-ath/d' .config
-          sed -i '/CONFIG_PACKAGE_kmod-mac80211/d' .config
-        fi
-        # 追加内核配置
         sed -i '$a  \
         CONFIG_CPU_FREQ_GOV_POWERSAVE=y \
         CONFIG_CPU_FREQ_GOV_USERSPACE=y \
@@ -248,11 +216,10 @@ jobs:
       run: |
         cd openwrt
         make defconfig
-        # 优化：仅对非指定架构清理无线驱动（避免x86重复清理）
         if [[ ! "${{matrix.target}}" =~ (amlogic_*|armsr_armv8|bcm27xx_*|rockchip_armv8|sunxi_*|x86_*|siflower_*) ]]; then
-          sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
-          sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
-          make defconfig
+        sed -n '/# Wireless Drivers/,/# end of Wireless Drivers/p' .config | sed -e 's/=m/=n/' >>.config
+        sed -i "s/\(kmod-qca.*\)=m/\1=n/" .config
+        make defconfig
         fi
         cat .config
 
@@ -266,7 +233,7 @@ jobs:
 
     - name: SSH connection to Actions
       uses: kiddin9/debugger-action@master
-      if: contains(github.event.action, 'ssh') || contains(github.event.inputs.target, 'ssh')
+      if: contains(github.event.action, 'ssh')
 
     - name: Compile the firmware
       id: compile
@@ -275,34 +242,22 @@ jobs:
         df -hT
         cd openwrt
         echo -e "$(($(nproc)+1)) thread compile"
-        # 优化：编译失败时保存完整日志
-        make -j$(($(nproc)+1)) || (make V=s &> build.log; cat build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"; df -hT; exit 1)
+        make -j$(($(nproc)+1)) || make V=s &>build.log || (tail -50 build.log; curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage";df -hT;exit 1)
         sed -i "s/# CONFIG_IB is not set/CONFIG_IB=y/" .config
         rm -rf staging_dir/toolchain-*/bin/*openwrt-linux-musl-lto-dump
         rm -rf staging_dir/toolchain-*/initial
         df -hT
-        # 定义FIRMWARE路径（解决后续上传失败问题）
-        echo "FIRMWARE=$(pwd)/bin/targets/*/*" >> $GITHUB_ENV
 
     - name: Organize files
       id: organize
       continue-on-error: true
       run: |
         shopt -s extglob
-        FW_DIR=$(find ${{ github.workspace }}/openwrt/bin/targets -type d -depth 2)
-        cd $FW_DIR
-        # 复制配置文件
+        cd openwrt/bin/targets/*/*/
         cp $GITHUB_WORKSPACE/openwrt/.config ${{matrix.target}}.config || true
         cp $GITHUB_WORKSPACE/openwrt/build_dir/target-*/linux-*/linux-*/.config ${{matrix.target}}_kernel.config || true
-        # 筛选x86架构有效固件（优化）
-        if [[ ${{ matrix.target }} =~ x86_* ]]; then
-          rm -rf !(*-ext4-combined-efi.img.gz|*-squashfs-combined-efi.img.gz|*.config|*.manifest) || true
-        fi
-        # 随机表情
         Emoji=("🎉" "🤞" "✨" "🎁" "🎈" "🎄" "🎨" "💋" "🍓" "🍕" "🍉" "💐" "🌴" "🚀" "🛸" "🗽" "⛅" "🌈" "🔥" "⛄" "🐶" "🏅" "🦄" "🐤")
         echo "EMOJI=${Emoji[$[$RANDOM % ${#Emoji[@]}]]}" >> $GITHUB_ENV
-        # 重新赋值FIRMWARE为实际固件目录
-        echo "FIRMWARE=$FW_DIR" >> $GITHUB_ENV
 
     - name: Upload firmware for artifact
       uses: actions/upload-artifact@main
@@ -310,7 +265,7 @@ jobs:
       with:
         name: ${{ env.VERSION }}_${{matrix.target}}
         path: |
-          ${{ env.FIRMWARE }}
+          openwrt/bin/targets/
 
     - name: Deploy imagebuilder to server
       uses: easingthemes/ssh-deploy@main
@@ -352,22 +307,13 @@ jobs:
       continue-on-error: true
       if: env.SCKEY
       run: |
-        if [[ ${{ steps.compile.outcome }} == 'success' ]]; then
-          curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=🎉OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译完成😋
-        else
-          curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=❌OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译失败😂
-        fi
+        # [ steps.compile.outputs.status == 'success' ] && curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=🎉OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译完成😋|| curl https://sctapi.ftqq.com/${{ secrets.SCKEY }}.send?text=❌OpenWrt_${{ env.VERSION }}_${{matrix.target}}编译失败😂
 
     - name: Telegram notification
       if: env.TELEGRAM_TOKEN && ! contains(github.event.action, 'notg')
       continue-on-error: true
       run: |
-        if [[ ${{ steps.compile.outcome }} == 'success' ]]; then
-          MSG="🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋 https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀"
-        else
-          MSG="❌ OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译失败 😂"
-        fi
-        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=$MSG" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
+        curl -k --data chat_id="${{ env.TELEGRAM_CHAT_ID }}" --data "text=🎉 OpenWrt ${{ env.VERSION }} ${{matrix.target}} 编译成功 😋  https://dl.openwrt.ai/firmware/${{matrix.target}}/  ${{ env.COWURL }}   ${{ env.WETRANS }} 🚀" "https://api.telegram.org/bot${{ env.TELEGRAM_TOKEN }}/sendMessage"
 
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
