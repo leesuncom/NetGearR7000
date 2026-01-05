@@ -192,6 +192,9 @@ jobs:
           /bin/bash "devices/${{matrix.target}}/$DIY_SH"
         fi
         cp -Rf ./diy/* ./ || true
+        chmod 755 ./package/base-files/files/etc/updatew.sh || true
+        chmod 755 ./package/base-files/files/etc/mosdns/script/flush_cache.sh
+        chmod 755 ./package/base-files/files/etc/init.d/cert_bootstrap
 
     - name: Apply patches
       run: |
