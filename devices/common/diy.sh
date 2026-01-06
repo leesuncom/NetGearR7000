@@ -1,6 +1,7 @@
 #!/bin/bash
 #=================================================
 shopt -s extglob
+sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=Openwrt-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
 sed -i '$a src-git kiddin9 https://github.com/kiddin9/kwrt-packages.git;main' feeds.conf.default
 sed -i "/telephony/d" feeds.conf.default

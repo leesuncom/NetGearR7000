@@ -1,15 +1,17 @@
 #!/bin/sh
 # ==============================================================================
-# OpenWRT 网络配置一键更新脚本（修复版 v2.5 2026-01-03）
+# OpenWRT 网络配置一键更新脚本（修复版 v2.6 2026-01-06）
 # 功能：更新 Hosts、SmartDNS 规则、dnscrypt-proxy 配置、MosDNS 规则，并重启相关服务
+# 更新：增加下载失败时不删除原始文件的功能
 # 适用环境：基于 OpenWRT 的路由器（如 R619AC）
 # 执行权限：必须 root 用户（无 sudo 提权，非 root 必然权限不足失败）
 # ==============================================================================
 
 # -------------------------- 基础配置（可按需调整） --------------------------
-SCRIPT_VERSION="v2.5"
+SCRIPT_VERSION="v2.6"
 TMP_DIR="/tmp/update-config"
 GITHUB_PROXY="https://gh-proxy.com/"  # 末尾必须带 /，确保 URL 拼接正确
+# GITHUB_PROXY="https://ghfast.top/"  # 末尾必须带 /，确保 URL 拼接正确
 
 # 各组件配置目录
 MOSDNS_RULE_DIR="/etc/mosdns/rule"
@@ -20,7 +22,7 @@ DNSCRYPT_CONF_DIR="/etc/dnscrypt-proxy2"
 CURL_OPTS="-fsSL -k -L --connect-timeout 15 --max-time 30 --retry 2 --retry-delay 3"
 
 # -------------------------- 工具函数 --------------------------
-# 文件下载：修复URL处理
+# 文件下载：修复URL处理，下载失败时不删除原始文件
 download_file() {
   local url="$1"
   local dest="$2"
@@ -38,15 +40,16 @@ download_file() {
   
   # 下载文件
   if curl $CURL_OPTS "$url" -o "$dest"; then
-    echo "  → $desc 下载完成"
+    echo "  ✅ $desc 下载完成"
+    return 0
   else
-    echo "  → $desc 下载失败"
-    rm -f "$dest"  # 删除可能的部分文件
+    echo "  ❌ $desc 下载失败"
+    return 1
   fi
 }
 
-# 文件复制
-copy_file() {
+# 安全文件复制：仅当源文件存在且下载成功时才复制
+safe_copy_file() {
   local src="$1"
   local dest="$2"
   local desc="$3"
@@ -55,6 +58,10 @@ copy_file() {
     echo "  → 复制：$desc"
     mkdir -p "$(dirname "$dest")"
     cp -f "$src" "$dest"
+    return 0
+  else
+    echo "  ⚠️  跳过复制：$desc（源文件不存在）"
+    return 1
   fi
 }
 
@@ -107,13 +114,13 @@ echo "https://anti-ad.net/anti-ad-for-smartdns.conf|$SMARTDNS_CONF_DIR/conf.d/an
   
   # 下载到临时文件
   tmp_file="$TMP_DIR/$(basename "$dest")"
-  download_file "$url" "$tmp_file" "$desc"
-  
-  # 复制到目标位置
-  if [ -f "$tmp_file" ]; then
-    copy_file "$tmp_file" "$dest" "$desc"
-    rm -f "$tmp_file"
+  if download_file "$url" "$tmp_file" "$desc"; then
+    # 只有下载成功时才复制到目标位置
+    safe_copy_file "$tmp_file" "$dest" "$desc"
+  else
+    echo "  ⚠️  保留原始文件：$dest"
   fi
+  rm -f "$tmp_file" 2>/dev/null
 done
 
 echo "  ✅ SmartDNS 规则更新完成"
@@ -140,7 +147,15 @@ echo "odoh-relays.md|ODOH中继文档"
   
   url="${GITHUB_PROXY}raw.githubusercontent.com/CNMan/dnscrypt-proxy-config/refs/heads/master/$filename"
   dest="$DNSCRYPT_CONF_DIR/$filename"
-  download_file "$url" "$dest" "$desc"
+  tmp_file="$TMP_DIR/$filename"
+  
+  if download_file "$url" "$tmp_file" "$desc"; then
+    # 只有下载成功时才复制到目标位置
+    safe_copy_file "$tmp_file" "$dest" "$desc"
+  else
+    echo "  ⚠️  保留原始文件：$dest"
+  fi
+  rm -f "$tmp_file" 2>/dev/null
 done
 
 echo "  ✅ dnscrypt-proxy 配置更新完成"
@@ -180,12 +195,13 @@ echo "white_list.txt|whitelist.txt"
   
   url="${GITHUB_PROXY}raw.githubusercontent.com/Journalist-HK/Rules/main/$src"
   tmp_file="$TMP_DIR/$dest"
-  download_file "$url" "$tmp_file" "Journalist-HK/$src"
   
-  if [ -f "$tmp_file" ]; then
-    cp -f "$tmp_file" "$MOSDNS_RULE_DIR/"
-    rm -f "$tmp_file"
+  if download_file "$url" "$tmp_file" "Journalist-HK/$src"; then
+    safe_copy_file "$tmp_file" "$MOSDNS_RULE_DIR/$dest" "Journalist-HK/$src"
+  else
+    echo "  ⚠️  保留原始文件：$MOSDNS_RULE_DIR/$dest"
   fi
+  rm -f "$tmp_file" 2>/dev/null
 done
 
 # 5.2 Loyalsoldier 规则集
@@ -204,12 +220,13 @@ echo "v2ray-rules-dat/release/greatfire.txt|greatfire.txt|GreatFire域名列表"
   
   url="${GITHUB_PROXY}raw.githubusercontent.com/Loyalsoldier/$path"
   tmp_file="$TMP_DIR/$dest"
-  download_file "$url" "$tmp_file" "Loyalsoldier/$desc"
   
-  if [ -f "$tmp_file" ]; then
-    cp -f "$tmp_file" "$MOSDNS_RULE_DIR/"
-    rm -f "$tmp_file"
+  if download_file "$url" "$tmp_file" "Loyalsoldier/$desc"; then
+    safe_copy_file "$tmp_file" "$MOSDNS_RULE_DIR/$dest" "Loyalsoldier/$desc"
+  else
+    echo "  ⚠️  保留原始文件：$MOSDNS_RULE_DIR/$dest"
   fi
+  rm -f "$tmp_file" 2>/dev/null
 done
 
 # 5.3 pmkol/easymosdns 规则集
@@ -226,32 +243,36 @@ echo "rules/china_ip_list.txt|china_ip_list.txt|中国IP列表"
   
   url="${GITHUB_PROXY}raw.githubusercontent.com/pmkol/easymosdns/$path"
   tmp_file="$TMP_DIR/$dest"
-  download_file "$url" "$tmp_file" "pmkol/$desc"
   
-  if [ -f "$tmp_file" ]; then
-    cp -f "$tmp_file" "$MOSDNS_RULE_DIR/"
-    rm -f "$tmp_file"
+  if download_file "$url" "$tmp_file" "pmkol/$desc"; then
+    safe_copy_file "$tmp_file" "$MOSDNS_RULE_DIR/$dest" "pmkol/$desc"
+  else
+    echo "  ⚠️  保留原始文件：$MOSDNS_RULE_DIR/$dest"
   fi
+  rm -f "$tmp_file" 2>/dev/null
 done
 
 # 5.4 CloudflareSpeedTest IP列表
 echo "  → 下载 CloudflareSpeedTest 规则集..."
 
-download_file "${GITHUB_PROXY}raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" \
-  "$TMP_DIR/ip.txt" "Cloudflare IPv4测试列表"
+tmp_file_ipv4="$TMP_DIR/ip.txt"
+tmp_file_ipv6="$TMP_DIR/ipv6.txt"
 
-if [ -f "$TMP_DIR/ip.txt" ]; then
-  cp -f "$TMP_DIR/ip.txt" "$MOSDNS_RULE_DIR/"
-  rm -f "$TMP_DIR/ip.txt"
+if download_file "${GITHUB_PROXY}raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ip.txt" \
+  "$tmp_file_ipv4" "Cloudflare IPv4测试列表"; then
+  safe_copy_file "$tmp_file_ipv4" "$MOSDNS_RULE_DIR/ip.txt" "Cloudflare IPv4测试列表"
+else
+  echo "  ⚠️  保留原始文件：$MOSDNS_RULE_DIR/ip.txt"
 fi
 
-download_file "${GITHUB_PROXY}raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" \
-  "$TMP_DIR/ipv6.txt" "Cloudflare IPv6测试列表"
-
-if [ -f "$TMP_DIR/ipv6.txt" ]; then
-  cp -f "$TMP_DIR/ipv6.txt" "$MOSDNS_RULE_DIR/"
-  rm -f "$TMP_DIR/ipv6.txt"
+if download_file "${GITHUB_PROXY}raw.githubusercontent.com/XIU2/CloudflareSpeedTest/master/ipv6.txt" \
+  "$tmp_file_ipv6" "Cloudflare IPv6测试列表"; then
+  safe_copy_file "$tmp_file_ipv6" "$MOSDNS_RULE_DIR/ipv6.txt" "Cloudflare IPv6测试列表"
+else
+  echo "  ⚠️  保留原始文件：$MOSDNS_RULE_DIR/ipv6.txt"
 fi
+
+rm -f "$tmp_file_ipv4" "$tmp_file_ipv6" 2>/dev/null
 
 echo "  ✅ MosDNS 规则更新完成"
 
@@ -277,6 +298,7 @@ echo "     /etc/init.d/dnscrypt-proxy status"
 echo "     /etc/init.d/mosdns status"
 echo "     /etc/init.d/smartdns status"
 echo "  3. 网络测试：ping baidu.com 和 ping google.com"
-echo "  4. 如果下载失败，可尝试更换代理："
+echo "  4. 如果下载失败，会保留原始文件，可尝试更换代理："
 echo "     https://ghfast.top/"
+echo "  5. 下载失败的文件会显示警告信息"
 echo "======================================"
