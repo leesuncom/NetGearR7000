@@ -1,8 +1,9 @@
 #!/bin/bash
 #=================================================
 shopt -s extglob
+#################################################
 sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=Openwrt-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
-
+#####################################################
 sed -i '$a src-git kiddin9 https://github.com/kiddin9/kwrt-packages.git;main' feeds.conf.default
 sed -i "/telephony/d" feeds.conf.default
 
@@ -61,13 +62,13 @@ done
 
 
 
-# 更换 golang 版本
+# ########################################################################################################更换 golang 版本#########################################
 rm -rf ./feeds/packages/lang/golang
 #cp -rf ../lede_pkg_ma/lang/golang ./feeds/packages/lang/golang
 git clone https://github.com/sbwml/packages_lang_golang -b 26.x feeds/packages/lang/golang
 # rust
 wget https://github.com/rust-lang/rust/commit/e8d97f0.patch -O feeds/packages/lang/rust/patches/e8d97f0.patch
-
+#######################################################################################################################################################
 
 
 
@@ -85,7 +86,7 @@ sed -i 's/max_requests 3/max_requests 20/g' package/network/services/uhttpd/file
 #rm -rf ./feeds/packages/lang/{golang,node}
 sed -i "s/tty\(0\|1\)::askfirst/tty\1::respawn/g" target/linux/*/base-files/etc/inittab
 
-date=`date +%m.%d.%Y`
+date=`date +%Y.%m.%d-%H%M`
 sed -i -e "/\(# \)\?REVISION:=/c\REVISION:=$date" -e '/VERSION_CODE:=/c\VERSION_CODE:=$(REVISION)' include/version.mk
 
 sed -i 's/option timeout 30/option timeout 60/g' package/system/rpcd/files/rpcd.config
