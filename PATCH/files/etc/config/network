@@ -19,7 +19,7 @@ config interface 'lan'
 	option proto 'static'
 	list ipaddr '10.0.0.252/24'
 	option ip6ifaceid 'eui64'
-	option gateway '10.0.0.251'
+	option gateway '10.0.0.1'
 	list dns '127.0.0.1'
 	option ip6assign '64'
 

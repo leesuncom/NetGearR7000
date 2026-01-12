@@ -26,7 +26,7 @@ dns:
     - 127.0.0.1:7755
   upstream_dns_file: ""
   bootstrap_dns:
-    - 119.29.29.29
+    - 0.0.0.0:5353
   fallback_dns: []
   upstream_mode: fastest_addr
   fastest_timeout: 1s
@@ -88,7 +88,7 @@ tls:
 querylog:
   dir_path: ""
   ignored: []
-  interval: 2160h
+  interval: 168h
   size_memory: 1000
   enabled: true
   file_enabled: true
