@@ -2,7 +2,7 @@
 # server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
 
 # 监听地址
-listen_addresses = ['0.0.0.0:5353']
+listen_addresses = ['127.0.0.1:5353']
 max_clients = 250
 
 # IP 版本设置
@@ -31,14 +31,14 @@ keepalive = 30
 cert_refresh_delay = 240
 
 # 引导解析器 - 使用国内稳定的 DNS
-# bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
-bootstrap_resolvers = ['1.1.1.1:53', '8.8.8.8:53', '9.9.9.9:53']
+bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
+# bootstrap_resolvers = ['1.1.1.1:53', '8.8.8.8:53', '9.9.9.9:53']
 ignore_system_dns = true
 
 # 网络探测
 netprobe_timeout = 30
-netprobe_address = '1.1.1.1:53'
-# netprobe_address = '119.29.29.29:53'
+# netprobe_address = '1.1.1.1:53'
+netprobe_address = '119.29.29.29:53'
 
 # 日志设置
 log_files_max_size = 10
@@ -55,14 +55,13 @@ reject_ttl = 300
 # 格式要求：每行一条，如“example.com 9.9.9.9,8.8.8.8”（域名+逗号分隔的IP）
 # 错误会导致dnscrypt-proxy崩溃，需检查：/etc/dnscrypt-proxy2/dnscrypt-forwarding-rules.txt
 forwarding_rules = 'dnscrypt-forwarding-rules.txt'
-
 cloaking_rules = 'dnscrypt-cloaking-rules.txt'
 cloak_ttl = 3600
 cloak_ptr = false
 
 # 缓存设置
 cache = true
-cache_size = 10240  # 增加缓存大小
+cache_size = 0 # 增加缓存大小
 cache_min_ttl = 300  # 减少最小TTL
 cache_max_ttl = 3600  # 减少最大TTL，保证及时更新
 cache_neg_min_ttl = 30
