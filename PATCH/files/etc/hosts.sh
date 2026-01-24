@@ -6,6 +6,7 @@ set -e  # 遇到错误立即退出，避免继续执行
 HOSTS_MARK_START="# ING Hosts Start"
 HOSTS_MARK_END="# ING Hosts End"
 HOSTS_URL="https://github-hosts.tinsfox.com/hosts"
+# HOSTS_URL="https://raw.hellogithub.com/hosts"
 HOSTS_FILE="/etc/hosts"
 
 echo "[1/3] 检查 Hosts 文件权限..."
