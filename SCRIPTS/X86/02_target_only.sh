@@ -36,6 +36,7 @@ sed -i -e 's/^\(.\).*vermagic$/\1cp $(TOPDIR)\/.vermagic $(LINUX_DIR)\/.vermagic
 # 预配置一些插件
 cp -rf ../PATCH/files ./files
 chmod 755 ./files/etc/updatew.sh
+chmod 755 ./files/etc/hosts.sh
 chmod 755 ./files/etc/mosdns/script/flush_cache.sh
 chmod 755 ./files/etc/init.d/cert_bootstrap
 

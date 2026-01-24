@@ -5,7 +5,7 @@ config interface 'loopback'
 	list ipaddr '127.0.0.1/8'
 
 config globals 'globals'
-	option dhcp_default_duid '0004657f3bb1a5784db794206781fa59579a'
+	option dhcp_default_duid '0004e030d8c1c7ac423f84715ed7b1e1c568'
 	option packet_steering '2'
 	option steering_flows '128'
 
@@ -21,5 +21,5 @@ config interface 'lan'
 	option ip6ifaceid 'eui64'
 	option gateway '10.0.0.251'
 	list dns '127.0.0.1'
-	option delegate '0'
+	option ip6assign '64'
 
