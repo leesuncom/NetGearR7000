@@ -4,9 +4,6 @@ config defaults
 	option output 'ACCEPT'
 	option forward 'ACCEPT'
 	option fullcone '1'
-	option natflow '0'
-	option shortcut_fe '0'
-	option flow_offloading '1'
 
 config zone
 	option name 'lan'
