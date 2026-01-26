@@ -314,3 +314,10 @@ config config_subscribe
 	option sub_ua 'clash.meta'
 	option sub_convert '0'
 
+config config_subscribe
+	option enabled '1'
+	option name '2'
+	option address 'https://raw.githubusercontent.com/telegeam/freenode/refs/heads/master/clash.yaml'
+	option sub_ua 'clash.meta'
+	option sub_convert '0'
+
