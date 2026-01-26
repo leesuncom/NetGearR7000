@@ -1,6 +1,7 @@
 # 服务器选择 - 简化列表，只保留最可靠的服务器
 # server_names = ['yandex', 'quad9-doh-ip4-port443-nofilter-pri']
-
+# server_names = ['rubyfish-doh-sg'', 'rubyfish-doh-hk']
+# server_names = ['cloudflare', 'google', 'doh.opendns.com']
 # 监听地址
 listen_addresses = ['127.0.0.1:5353']
 max_clients = 250
@@ -10,7 +11,7 @@ ipv4_servers = true
 ipv6_servers = false
 
 # 协议支持
-dnscrypt_servers = true
+dnscrypt_servers = false
 doh_servers = true
 odoh_servers = true
 
@@ -21,8 +22,8 @@ require_nofilter = true
 disabled_server_names = []
 
 # 代理设置 - 确保代理服务正常运行，mosdns在启用代理这里就不要启用了。
-# proxy = 'socks5://127.0.0.1:7898'
-force_tcp = false
+proxy = 'socks5://127.0.0.1:7898'
+force_tcp = true
 # http3 = false
 
 # 超时和连接设置
@@ -32,7 +33,7 @@ cert_refresh_delay = 240
 
 # 引导解析器 - 使用国内稳定的 DNS
 bootstrap_resolvers = ['119.29.29.29:53', '223.5.5.5:53']
-# bootstrap_resolvers = ['1.1.1.1:53', '8.8.8.8:53', '9.9.9.9:53']
+# bootstrap_resolvers = ['127.0.0.1:53']
 ignore_system_dns = true
 
 # 网络探测
@@ -161,7 +162,7 @@ cert_key_file = '/etc/dnscrypt-proxy2/mosdns-key.pem'
 
 # 兼容性设置
 [broken_implementations]
-fragments_blocked = ['cisco', 'cisco-ipv6', 'cisco-familyshield', 'cisco-familyshield-ipv6', 'cleanbrowsing-adult', 'cleanbrowsing-adult-ipv6', 'cleanbrowsing-family', 'cleanbrowsing-family-ipv6', 'cleanbrowsing-security', 'cleanbrowsing-security-ipv6']
+fragments_blocked = ['cisco', 'cisco-familyshield', 'cleanbrowsing-adult', 'cleanbrowsing-family', 'cleanbrowsing-security']
 
 # 客户端证书认证
 [doh_client_x509_auth]
@@ -175,7 +176,7 @@ routes = [
    { server_name = '*', via = ['anon-cs-singapore', 'anon-cs-tokyo'] }
 ]
 skip_incompatible = true
-direct_cert_fallback = true
+direct_cert_fallback = false
 
 # DNS64
 [dns64]
