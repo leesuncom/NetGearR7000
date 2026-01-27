@@ -22,5 +22,4 @@ config interface 'lan'
 	option gateway '10.0.0.1'
 	list dns '127.0.0.1'
 	option delegate '0'
-	option ip6assign '64'
 
