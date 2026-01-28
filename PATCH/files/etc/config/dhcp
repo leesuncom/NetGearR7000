@@ -18,10 +18,8 @@ config dnsmasq
 	option nonegcache '1'
 	list listen_address '10.0.0.252'
 	option noresolv '1'
-	option port '5378'
 	option cachesize '0'
 	list server '127.0.0.1#7755'
-	option queryport '5333'
 
 config dhcp 'lan'
 	option interface 'lan'
