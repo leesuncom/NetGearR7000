@@ -19,6 +19,7 @@ config dnsmasq
 	list listen_address '10.0.0.252'
 	option noresolv '1'
 	option cachesize '0'
+	option allservers '1'
 	list server '127.0.0.1#7755'
 
 config dhcp 'lan'
