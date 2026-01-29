@@ -7,6 +7,8 @@ config defaults
 	option shortcut_fe '0'
 	option natflow '0'
 	option flow_offloading '1'
+	option synflood_protect '1'
+	option drop_invalid '1'
 
 config zone
 	option name 'lan'
