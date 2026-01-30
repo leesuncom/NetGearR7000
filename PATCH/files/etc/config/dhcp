@@ -18,9 +18,11 @@ config dnsmasq
 	option nonegcache '1'
 	list listen_address '10.0.0.252'
 	option noresolv '1'
-	option cachesize '0'
 	option allservers '1'
 	list server '127.0.0.1#7755'
+	option cachesize '0'
+	option logqueries '1'
+	option logfacility '/tmp/dnsmasq_queries.log'
 
 config dhcp 'lan'
 	option interface 'lan'
