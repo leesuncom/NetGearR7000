@@ -2,6 +2,7 @@
 name: OpenWrt-Matrix
 
 on:
+  # 供其他工作流调用的复用入口
   workflow_call:
     inputs:
       targets:
@@ -17,6 +18,7 @@ on:
         type: boolean
         default: true
 
+  # 手动触发工作流（方便测试调试）
   workflow_dispatch:
     inputs:
       targets:
@@ -36,37 +38,40 @@ on:
         default: true
 
 jobs:
+  # 步骤1：筛选目标平台，生成构建矩阵
   setup:
     runs-on: ubuntu-24.04
+    # 仅仓库所有者可触发，防止恶意滥用
     if: github.event.repository.owner.id == github.event.sender.id
     steps:
       - id: set-matrix
         shell: bash
         run: |
-          # All possible targets
+          # 所有支持的目标平台（可扩展其他平台，如RaspberryPi、NetGearR7000等）
           all_targets='[
             {"name": "X86", "script_dir": "X86", "arch": "x86/64", "arch_suffix": ""}
           ]'
 
-          # User selected targets
+          # 处理用户输入的目标平台（替换中文逗号、转大写、去除首尾空格）
           inputs_targets="${{ inputs.targets }}"
-          # Replace Chinese comma with English comma, convert to uppercase
           inputs_targets=$(echo "$inputs_targets" | sed 's/，/,/g' | tr 'a-z' 'A-Z' | xargs)
 
           if [[ -z "$inputs_targets" ]]; then
-            # If input is empty, run all targets
+            # 输入为空时，运行所有支持的平台
             echo "matrix=$(echo "$all_targets" | jq -c '{include: .}')" >> $GITHUB_OUTPUT
           else
-            # Filter targets based on input
+            # 按用户输入筛选目标平台，生成专属构建矩阵
             filtered_targets=$(echo "$all_targets" | jq --arg targets "$inputs_targets" '[.[] | select(.name as $name | ($targets | split(",") | map(gsub(" "; "")) | index($name))) ]')
             echo "matrix=$(echo "$filtered_targets" | jq -c '{include: .}')" >> $GITHUB_OUTPUT
           fi
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
 
+  # 步骤2：核心构建任务（按矩阵并行构建各平台固件）
   build:
     needs: setup
-    env: # default values, will be overridden later
+    # 全局环境变量（后续会被步骤内逻辑覆盖，仅做默认占位）
+    env:
       seed: dummy
       artifact_prefix: dummy
       sha_match: dummy
@@ -80,13 +85,16 @@ jobs:
     runs-on: ubuntu-24.04
     if: github.event.repository.owner.id == github.event.sender.id
     strategy:
+      # 单个平台构建失败，不终止其他平台的构建（容错性）
       fail-fast: false
+      # 加载从setup任务传递的构建矩阵
       matrix: ${{ fromJson(needs.setup.outputs.matrix) }}
     steps:
+      # 生成各平台专属变量并打印调试信息
       - name: Generate platform variables and print
         id: genvars
         run: |
-          # Debug: Print all input variables
+          # 调试：打印所有输入变量和矩阵变量，方便排查问题
           echo "inputs.targets: '${{ inputs.targets }}'"
           echo "inputs.upload_source: '${{ inputs.upload_source }}'"
           echo "inputs.build_firmware: '${{ inputs.build_firmware }}'"
@@ -96,19 +104,15 @@ jobs:
           echo "matrix.arch_suffix: '${{ matrix.arch_suffix }}'"
           echo "github.run_id: '${{ github.run_id }}'"
 
-          # Platform name in lowercase
+          # 平台名称转小写，用于后续文件名匹配
           name_lower=$(echo "${{ matrix.name }}" | tr 'A-Z' 'a-z')
 
-          # seed rule
+          # 定义各平台专属变量规则
           seed="${{ matrix.name }}"
-
-          # artifact_prefix rule
           artifact_prefix="${{ matrix.name }}-openwrt"
-
-          # sha_match rule
           sha_match="$name_lower"
 
-          # ext4_zip/sfs_zip rule
+          # 区分X86平台和其他平台的固件文件名匹配规则
           if [ "$name_lower" = "x86" ]; then
             ext4_zip='*ext4-combined*'
             sfs_zip='*squashfs-combined*'
@@ -119,12 +123,12 @@ jobs:
             sysupgrade_glob='*sysupgrade.img*'
           fi
 
-          # workerid variable
+          # 构建任务唯一ID（用于区分不同构建的产物）
           workerid=${{ github.run_id }}
-
-          # openwrt_source_name archive name
+          # 源码包归档名称（包含平台和构建ID，防止重名）
           openwrt_source_name="openwrt-source-${{ matrix.name }}-${workerid}.tar"
 
+          # 将变量写入GitHub环境变量，供后续步骤复用
           cat <<EOF | tee -a $GITHUB_ENV
           seed=$seed
           artifact_prefix=$artifact_prefix
@@ -135,11 +139,13 @@ jobs:
           openwrt_source_name=$openwrt_source_name
           EOF
 
+      # 显示系统硬件信息（用于调试构建性能，确认CPU核心数等）
       - name: Show system info
         run: |
           echo -e "Total CPU cores\t: $(nproc)"
           cat /proc/cpuinfo | grep 'model name'
 
+      # 最大化构建磁盘空间（避免OpenWrt编译过程中磁盘不足报错）
       - name: Maximize build space
         if: inputs.build_firmware
         uses: easimon/maximize-build-space@master
@@ -152,33 +158,61 @@ jobs:
           remove-haskell: "true"
           remove-codeql: "true"
 
+      # 检出当前仓库的源码到构建环境
       - name: Checkout
         uses: actions/checkout@main
 
+      # 初始化OpenWrt构建依赖（修复核心换行问题，格式规整）
       - name: Init build dependencies
         env:
           DEBIAN_FRONTEND: noninteractive
+          TZ: Asia/Shanghai  # 补充时区配置，提升健壮性（可按需修改）
         run: |
+          # 1. 更新apt软件源索引
           sudo -E apt-get -qq update
+          
+          # 2. 安装apt-fast（并行下载工具，提升依赖安装速度）
           sudo /bin/bash -c "$(curl -sL https://git.io/vokNn)"
-          sudo -E apt-fast -y -qq install ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential 
-bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk gettext gcc-multilib 
-g++-multilib git gnutls-dev gperf haveged help2man intltool lib32gcc-s1 libc6-dev-i386 libelf-dev 
-libglib2.0-dev libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses-dev libpython3-dev 
-libreadline-dev libssl-dev libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano 
-ninja-build p7zip p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils 
-python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig texinfo uglifyjs 
-upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -qq install dos2unix dwarves jq npm quilt
+          
+          # 3. 安装核心构建依赖（修复换行问题，规整排列，避免命令执行失败）
+          sudo -E apt-fast -y -qq install \
+            ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
+            bzip2 ccache clang cmake cpio curl device-tree-compiler ecj fastjar flex gawk \
+            gettext gcc-multilib g++-multilib git gnutls-dev gperf haveged help2man intltool \
+            lib32gcc-s1 libc6-dev-i386 libelf-dev libglib2.0-dev libgmp3-dev libltdl-dev \
+            libmpc-dev libmpfr-dev libncurses-dev libpython3-dev libreadline-dev libssl-dev \
+            libtool libyaml-dev libz-dev lld llvm lrzsz mkisofs msmtp nano ninja-build p7zip \
+            p7zip-full patch pkgconf python3 python3-pip python3-ply python3-docutils \
+            python3-pyelftools qemu-utils re2c rsync scons squashfs-tools subversion swig \
+            texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd
+          
+          # 4. 安装额外辅助依赖（用于自定义脚本和后续处理）
+          sudo -E apt-fast -y -qq install dos2unix dwarves jq npm quilt
+          
+          # 5. 配置Node.js环境（安装稳定版，满足部分LuCI插件构建需求）
           sudo -E npm install -g pnpm
           sudo -E npm install -g n
           sudo -E n stable
+          
+          # 6. 安装Python依赖（设备树解析工具，规避系统包保护限制）
           pip3 install --user -U pylibfdt --break-system-packages
+          
+          # 7. 清理系统冗余包，释放磁盘空间
           sudo -E apt-get -qq autoremove --purge
           sudo -E apt-get -qq clean
-          sudo -E git config --global user.name 'GitHub Actions' && git config --global user.email 'noreply@github.com'
+          
+          # 8. 配置Git全局用户信息（避免编译过程中Git身份验证警告）
+          sudo -E git config --global user.name 'GitHub Actions'
+          sudo -E git config --global user.email 'noreply@github.com'
           sudo -E git config --global core.abbrev auto
+          
+          # 9. 设置系统时区（补充配置，提升健壮性）
+          sudo timedatectl set-timezone "$TZ"
+          
+          # 10. 查看磁盘空间使用情况（排查磁盘不足问题）
           df -h
 
+      # 准备Mixedwrt环境（复制平台专属脚本并执行初始化）
       - name: Prepare Mixedwrt
         run: |
           sudo chown -R runner:runner /home/runner/work/NetGearR7000/NetGearR7000
@@ -186,6 +220,7 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
           cp -r ./SCRIPTS/. ./
           /bin/bash 01_get_ready.sh
 
+      # 准备OpenWrt软件包（执行预处理脚本，配置软件源和插件）
       - name: Prepare Package
         working-directory: ${{ github.workspace }}/openwrt
         run: |
@@ -194,50 +229,61 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
           /bin/bash 02_target_only.sh
           /bin/bash 04_remove_upx.sh
 
+      # 加载平台专属配置文件（导入预定义的.config）
       - name: QTMDFW4
         working-directory: ${{ github.workspace }}/openwrt
         run: |
           cp -rf ../SEED/${{ env.seed }}/config.seed .config
 
+      # 转换多语言翻译文件（优化LuCI界面的多语言支持）
       - name: Convert Translation
         working-directory: ${{ github.workspace }}/openwrt
         run: |
           /bin/bash 03_convert_translation.sh
+
+      # 为LuCI插件添加ACL权限配置（避免权限不足导致的功能异常）
       - name: Add ACL
         working-directory: ${{ github.workspace }}/openwrt
         run: |
           /bin/bash 05_create_acl_for_luci.sh -a
+
+      # 修复文件权限（确保所有编译脚本具备可执行权限）
       - name: Fix Permissions
         working-directory: ${{ github.workspace }}/openwrt
         run: |
           sudo -E chmod -R 755 ./08_fix_permissions.sh
           /bin/bash 08_fix_permissions.sh
 
+      # 生成最终编译配置文件（基于导入的.config生成完整配置）
       - name: Make Config
         working-directory: ${{ github.workspace }}/openwrt
         run: |
           make defconfig
 
+      # 获取架构信息并归档源码（若启用上传源码选项）
       - name: Get Architecture
         id: getarch
         working-directory: ${{ github.workspace }}/openwrt
         run: |
+          # 从.config文件中提取目标设备架构
           TARGET_DEVICE_ARCH="$(grep "^CONFIG_TARGET_.*_.*=y$" ".config" | head -n 1 | sed 's/^CONFIG_TARGET_//g' | awk -F '_' '{print $1}')"
           if [ -n "${{ matrix.arch_suffix }}" ]; then
             TARGET_DEVICE_ARCH="$TARGET_DEVICE_ARCH-${{ matrix.arch_suffix }}"
           fi
           echo "TARGET_DEVICE_ARCH=$TARGET_DEVICE_ARCH" >> $GITHUB_ENV
+          
+          # 获取OpenWrt最新稳定版标签（用于命名产物）
           latest_release="$(curl -s https://github.com/openwrt/openwrt/tags | grep -Eo "v[0-9\.]+\-*r*c*[0-9]*.tar.gz" | sed -n '/[2-9][5-9]/p' | sed -n 1p | sed 's/.tar.gz//g' | sed 's/v//g')"
           echo "latest_release=${latest_release}" >> $GITHUB_ENV
 
+          # 归档OpenWrt源码（保留符号链接，必须使用tar命令，避免文件丢失）
           echo "Package folder ${{ env.openwrt_source_name }}"
           cd ..
-          # Must use tar, otherwise symbolic links will be incomplete
           if [ "${{ inputs.upload_source }}" = "true" ]; then
             tar -cf ${{ env.openwrt_source_name }} openwrt
           fi
 
-      # upload_source
+      # 上传源码归档作为工件（保留5天，方便后续调试）
       - name: Upload Source Archive
         if: inputs.upload_source
         uses: actions/upload-artifact@v4
@@ -247,6 +293,7 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
             ${{ env.openwrt_source_name }}
           retention-days: 5
 
+      # 缓存编译依赖（加速后续重复构建，避免重复下载依赖包）
       - name: Cache
         if: inputs.build_firmware
         uses: HiGarfield/cachewrtbuild@main
@@ -255,17 +302,19 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
           prefix: ${{ github.workspace }}/openwrt
           skip_saving: ${{ !inputs.build_firmware }}
 
+      # 下载编译所需的依赖包（并行下载，提升下载速度）
       - name: Make Download
         if: inputs.build_firmware
         working-directory: ${{ github.workspace }}/openwrt
         run: |
+          # 若已上传源码，删除本地归档释放磁盘空间
           if [ "${{ inputs.upload_source }}" = "true" ] && [ -f ../${{ env.openwrt_source_name }} ]; then
             rm ../${{ env.openwrt_source_name }}
           fi
           make download -j50
           make -j$(($(nproc) + 1)) package/network/utils/nftables/refresh V=s
 
-      # build_firmware
+      # 编译OpenWrt固件（并行编译，忽略非致命错误，提升构建效率）
       - name: Compile Openwrt
         if: inputs.build_firmware
         working-directory: ${{ github.workspace }}/openwrt
@@ -274,6 +323,8 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
         run: |
           IGNORE_ERRORS=1 make -j$(($(nproc) + 1))
           echo $?
+
+      # 编译失败时，单线程重新编译并输出详细日志（便于排查具体错误）
       - name: If Error
         if: steps.compileopenwrt.outcome == 'failure'
         working-directory: ${{ github.workspace }}/openwrt
@@ -282,6 +333,7 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
           echo '================================================================'
           make -j1 V=s
 
+      # 整理编译产物（压缩、生成校验和、打包，方便上传和使用）
       - name: Organize files
         if: inputs.build_firmware
         id: organize
@@ -290,17 +342,25 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
         run: |
           rm -rf ./artifact/
           mkdir -p ./artifact/
+          # 移动sysupgrade固件到工件目录（容错处理，避免文件不存在报错）
           mv openwrt/bin/targets/${{ matrix.arch }}/${{ env.sysupgrade_glob }} ./artifact/ || true
           cd ./artifact/
           ls -Ahl
+          
+          # 解压并重新压缩固件（优化压缩率，减小产物体积）
           gzip -d *.gz || true
           gzip --best *.img
           ls -Ahl
+          
+          # 生成SHA256校验和文件（用于验证固件完整性）
           sha256sum openwrt*${{ env.sha_match }}* | tee ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}.sha256sum
+          
+          # 打包ext4和squashfs格式固件（方便用户下载使用）
           zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-ext4.zip ${{ env.ext4_zip }}
           zip ${{ env.artifact_prefix }}-$(date +%Y-%m-%d)-${{ env.latest_release }}-sfs.zip ${{ env.sfs_zip }}
           ls -Ahl
 
+      # 创建/更新GitHub Release并上传固件包（发布最终产物）
       - name: Create release
         if: inputs.build_firmware
         id: create_release
@@ -315,9 +375,11 @@ upx-ucl unzip vim wget xmlto xxd zlib1g-dev zstd          sudo -E apt-fast -y -q
           token: ${{ secrets.GITHUB_TOKEN }}
           artifacts: ./artifact/*.zip
 
+      # 编译完成后查看磁盘空间使用情况（用于后续优化磁盘配置）
       - name: Print Disk Space After
         run: df -h
 
+      # 触发对应平台的徽章同步工作流（更新构建状态徽章）
       - name: Trigger badge sync for current platform
         if: github.workflow == 'OpenWrt-Matrix' && inputs.build_firmware && steps.create_release.outcome != 'skipped' && always()
         env:
